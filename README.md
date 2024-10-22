@@ -17,8 +17,18 @@ If the day inside caledar is clicked, the server redirects a user to the page of
 
 POST-requests are sent to server using AJAX.
 
+Also, operators have to keep records of the of the remaining powders every thursday.
+![material_table](images/material_table.png)
 
 # Printing Register
+The Printing Register was developed for engineers to monitor orders and get financial statistics of a time period. 
+New orders should be added through the form ("+Новый заказ").
+The table is editable, so an engineer can change order name, customer, material etc. 
 
+![orders_table](images/orders_table.png)
+
+The financial statistics shows all orders during some time period (all time, this year, manually set period). Rows of the table can be sorted by clicking on the table header.
+![finantial_statistics](images/finantial_statistics.png)
 
 # Printing Plan
+Is being developing...
