@@ -1,0 +1,152 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+
+{% block main %}
+<meta charset="UTF-8">
+        <title>Календарь</title>
+        <link rel="stylesheet"
+              href="{% static 'style_3.css'%}"
+              type="text/css"
+        />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+<div class="block" id="main_content">
+    <div id="info" style="display: none">
+        <label for="inner_text"></label>
+         <ul id="inner_text">
+            <br/>
+         </ul>
+    </div>
+        <form action="" method="POST" class="calendar">
+            {% csrf_token %}
+            <input type="submit" name="previous-month" id="previous-month" value="<< Назад">
+            <input type="submit" name="next-month" id="next-month" value="Далее >>" >
+
+            <input type="hidden" name="current-month" id="current-month" value="{{month}}">
+            <input type="hidden" name="current-year" id="current-year" value="{{year}}">
+            <br>
+            <br>
+            <div class="calendar" id="html_calendar">
+                    {{html_calendar}}
+            </div>
+        </form>
+        <form action="" method="POST" class="calculator">
+            {% csrf_token %}
+            <div id="button-to-table">
+                <input type="submit" name="redirect-to-table" id="redirect-to-table" value="Учет порошка">
+            </div>
+            <div class="calculator" id="calculator">
+                <div id="label-for-calculator">
+                    <h3>Калькулятор расчета порошка в принтере</h3>
+                </div>
+                <div id="printer-select-block">
+                    <label for="printer">Выбор установки:</label>
+
+                    <select id="printer" name="printer">
+                        <option value="" disabled selected hidden>---</option>
+                        <option value="17662.5">mid</option>
+                        <option value="79382.34">maxi</option>
+                        <option value="6644.24">mini</option>
+                        <option value="9498.5">mini pro</option>
+                    </select>
+                </div>
+                <div id="material-select-block">
+                    <label for="material">Материал:</label>
+                    <select id="material" name="material">
+                        <option value="" disabled selected hidden>---</option>
+                        {% for item in powders %}
+                            <option value="{{item.density}}">{{item.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div id="height-input-block">
+                    <label for="height">Значение высоты колодцев S2+S3:</label>
+                    </br>
+                    <input type="number" id="height" name="height" min="0" max="1000000" value="245"/>
+                </div>
+                <div id="count-block">
+
+                    <input type="submit" id="count-button" value="Посчитать" >
+                    <br/>
+                    <br/>
+                    <output name="result" for="printer material height">КГ в принтере: {{result}}</output>
+                </div>
+            </div>
+            <div id="legend_block">
+                <h3 id="legend-label">Легенда</h3>
+                <br>
+                <div id="colors">
+                    <div class="colors">
+                        <div class="color" id="color-1"></div>
+                        <div class="color-title">Взвешивание порошка (каждый четверг)</div>
+                    </div>
+                    <div class="colors">
+                        <div class="color" id="color-2"></div>
+                        <div class="color-title">Очистка оптики (каждая пятница)</div>
+                    </div>
+                    <div class="colors">
+                        <div class="color" id="color-3"></div>
+                        <div class="color-title">Очистка циклона (в конце месяца)</div>
+                    </div>
+                    <div class="colors">
+                        <div class="color" id="color-4"></div>
+                        <div class="color-title">Чистка установок (в начале месяца)</div>
+                    </div>
+                </div>
+                <div class="link" id="regulation_block">
+                    <a id="regulation"
+                       href="https://docs.google.com/document/d/1ZRR6VV5Uom50toFhrCv1mS2FfoVGQiju/edit#heading=h.n0167yacyi5c">
+                        Ссылка на регламент</a>
+                </div>
+
+            </div>
+
+            <script>
+                $("td.mon, td.tue, td.wed, td.thu, td.fri, td.sat, td.sun").hover(function() {
+                    var id = this.id;
+                        $.ajax({
+                            url: '/mycalendar/',
+                            data: {
+                                'id': id,
+                            },
+                            dataType: 'json',
+                            type: 'GET',
+                            success: function (data) {
+                                var info = document.getElementById('info');
+                                var label = info.children[0];
+                                var text = info.children[1];
+                                text.innerHTML = "";
+                                label.innerText = data.date;
+                                if (data.tasks.length == 0 && data.extra.length == 0) {
+                                    text.innerHTML = "Выполненных заданий нет";
+                                } else {
+                                    for (item of data.tasks) {
+                                        const elem = document.createElement("li");
+                                        elem.innerHTML = item.times + " - " + item.name;
+                                        text.appendChild(elem);
+                                    };
+                                    for (item of data.extra) {
+                                        const elem = document.createElement("li");
+                                        elem.innerHTML = item;
+                                        text.appendChild(elem);
+                                    };
+                                }
+                                info.style.display = 'block'
+                            },
+                            error: function (er) {
+                                alert(er);
+                            }
+                        });
+                    }, function () {
+                       var info = document.getElementById('info');
+                       info.style.display = 'none';
+                    });
+            </script>
+
+            <script src="{% static 'script.js'%}"></script>
+            <script src="{% static 'script_2.js'%}"></script>
+        </form>
+    </div>
+{% endblock %}

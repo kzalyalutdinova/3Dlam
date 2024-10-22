@@ -1,0 +1,113 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+{% block main %}
+        <meta charset="UTF-8">
+        <title>Новый заказ</title>
+        {% load static %}
+        <link rel="stylesheet"
+              href="{% static 'style_OderCreation.css'%}"
+              type="text/css"
+        />
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
+
+        <script>
+            $(function () {
+                $("#datepicker").datepicker({
+
+                    format: "yyyy-mm-dd",
+                    todayBtn: true,
+                    todayHighlight: true,
+                    language: "ru",
+
+                });
+            });
+
+            </script>
+    <div class="block" id="main_content">
+        <form enctype="multipart/form-data" action="" class="back_form" method="post" id="back_form">
+            <div class="block" id="back_block">
+                {% csrf_token %}
+                <input type="submit" class="button" id="back" name="back" value="Назад"/>
+            </div>
+        </form>
+            <form enctype="multipart/form-data" action="" class="printing_register" method="post" id="order_creation">
+                {% csrf_token %}
+
+                <h2 class="title" id="new_order">Новый заказ</h2>
+                <div class="block" id="order-name-block">
+                    <label for="order_name" class="label">Наименование</label>
+                    <input type="text" class="input" id="order_name" name="order_name" required maxlength="200"/>
+                </div>
+                <div class="block" id="customer-block">
+                    <label for="customer" class="label">Заказчик</label>
+                    <input type="text" class="input" id="customer" name="customer" required maxlength="200"/>
+                </div>
+                <div class="block" id="amount-block">
+                    <label for="amount" class="label">Количество</label>
+                    <input type="number" class="input" id="amount" name="amount" required min="1"/>
+                </div>
+                <div class="block" id="material-block">
+                    <label for="material" class="label">Материал</label>
+                    <select name="material" id="material" required>
+                        <option value="" disabled selected hidden>--Выберите материал--</option>
+                        {% for material in materials %}
+                            <option value="{{material.name}}">{{material.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="block" id="volume-block">
+                    <label for="volume" class="label">Объем</label>
+                    <input type="number" class="input" id="volume" name="volume" required min="0" step="0.01"/>
+                </div>
+                <div class="block" id="cost-block">
+                    <label for="cost" class="label">Стоимость</label>
+                    <input type="number" class="input" id="cost" name="cost" required min="0"/>
+                </div>
+                <div class="block" id="monthyear-block">
+                    <label for="datepicker" class="label">Дата заказа</label>
+                    <input type="text" class="input" id="datepicker" name="datepicker" required readonly />
+                </div>
+                <div class="block" id="duration-block">
+                    <label for="duration" class="label">Длительность, дн.</label>
+                    <input type="number" class="input" id="duration" name="duration" value="1" required />
+                </div>
+                <div class="block" id="comment_block">
+                    <label for="comment" class="label">Комментарии к заказу</label>
+                    <input type="text" class="input" id="comment" name="comment" maxlength="300" />
+                </div>
+                <div class="block" id="ready_block">
+                    <input type="checkbox" id="ready" name="ready" value="True"/>
+                    <label for="ready" class="label" id="ready_label">Заказ готов</label>
+
+                </div>
+                <div class="block" id="upload_files">
+                    <input name="drawings" type="file" id="drawings" accept="image/png, image/jpeg" multiple />
+
+                </div>
+
+
+                <div class="block" id="submit-block">
+                    <input type="submit" class="button" id="submit_button" name="submit_button" value="Сохранить"/>
+                </div>
+
+                <script>
+                    $( function() {
+                        var availableTags = [
+                            {% for customer in customers %}
+                                "{{customer.name}}",
+                            {% endfor %}
+                        ];
+                        $("#customer").autocomplete({
+                            source: availableTags
+                        });
+                    });
+                </script>
+            </form>
+    </div>
+{% endblock %}

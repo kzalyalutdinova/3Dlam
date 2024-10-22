@@ -1,0 +1,353 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+{% block main %}
+
+        <meta charset="UTF-8">
+        <title>Журнал печати</title>
+        {% load static %}
+
+        <link rel="stylesheet"
+              href="{% static 'style_OrdersTable.css'%}"
+              type="text/css"
+        />
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css" integrity="sha512-34s5cpvaNG3BknEWSuOncX28vz97bRI59UnVtEEpFX536A7BtZSJHsDyFoCl8S7Dt2TPzcrCEoHBGeM4SUBDBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
+        <script>
+            $(function () {
+                $("[id^=date]").datepicker({
+                    format: "yyyy-mm-dd",
+                    todayBtn: true,
+                    todayHighlight: true,
+                    language: "ru",
+                });
+            });
+            </script>
+        <script>
+            $(function () {
+                $("#search").datepicker({
+                    format: "MM yyyy",
+                    minViewMode: "months",
+                    language: "ru",
+                });
+            });
+        </script>
+        <script>
+            $( function() {
+                var availableTags = [
+                    {% for customer in customers %}
+                        "{{customer.name}}",
+                    {% endfor %}
+                ];
+                $("[id^=customer]").autocomplete({
+                    source: availableTags
+                });
+            });
+        </script>
+
+
+        <form action="" class="printing_register" method="post">
+            {% csrf_token %}
+            <div class="block" id="search_n_neworder">
+                <div class="block" id="search_block">
+                    <input type="text" class="search" id="search" name="search" placeholder="Выберите месяц и год" readonly />
+                    <input type="submit" class="button" id="search_button" name="search_button" value="Найти"/>
+                </div>
+
+                <div class="block" id="submit_n_new">
+                    <div class="block" id="neworder_block">
+                        <input type="submit" class="button" id="new_order" name="new_order_button" value="+ Новый заказ"/>
+                    </div>
+                    <div class="block" id="newmaterial-block">
+                        <input type="submit" class="button" id="new_material" name="new_material" value="+ Новый материал"/>
+                    </div>
+                    <div class="block" id="newprinter-block">
+                        <input type="submit" class="button" id="new_printer" name="new_printer" value="+ Новый принтер"/>
+                    </div>
+                    <div class="block" id="analytics-block">
+                        <input type="submit" class="button" id="analytics" name="analytics" value="Статистика"/>
+                    </div>
+                    <div class="block" id="hide_tab_block">
+                        <button type="button" class="button" id="show_hide" >Скрыть</button>
+                    </div>
+                </div>
+            </div>
+            <div class="block" id="table-block">
+                <table id="printing_register_table">
+                   <thead>
+                        <tr>
+                            <th scope="col" class="tab-label">Чертеж</th>
+                            <th scope="col" class="tab-label">Название</th>
+                            <th scope="col" class="tab-label">Заказчик</th>
+                            <th scope="col" class="tab-label">Кол-во</th>
+                            <th scope="col" class="tab-label">Материал</th>
+                            <th scope="col" class="tab-label">Объем</th>
+                            <th scope="col" class="tab-label">Стоимость</th>
+                            <th scope="col" class="tab-label">Начало</th>
+                            <th scope="col" class="tab-label">Дни</th>
+                            <th scope="col" class="tab-label">Принтер</th>
+                            <th scope="col" class="tab-label">Отправка</th>
+                            {% for day in days %}
+                                <th scope="col" class="tab_label_days" width="25">{{day}}</th>
+                            {% endfor %}
+                        </tr>
+                   </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <th scope="row" id="drawing_cell" class="cell">
+                                    <a class='showimg'>Показать
+                                    <div class='image-container' id="image-container&{{order.order.id}}" style='display:none;'>
+                                            {% for drawing in drawings %}
+                                                {% for d in drawing %}
+
+                                                    {% if d.order.id == order.order.id %}
+
+                                                            <img style="width:50%;" src="../static/media/{{d.file}}"/>
+
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% endfor %}
+                                    </div>
+                                        </a>
+                                </th>
+                                <td id="order-name" class="cell">
+                                    <input type="text" class="input" id="name&{{order.order.id}}" name="order_name" value="{{order.order.name}}"/>
+                                </td>
+                                <td id="order-customer" class="cell">
+                                    <input type="text" class="input" id="customer&{{order.order.id}}" name="customer" value="{{order.order.customer}}"/>
+                                </td>
+                                <td id="order-amount" class="cell">
+                                    <input type="number" class="input" id="amount&{{order.order.id}}" name="amount" value="{{order.order.amount}}"/>
+                                </td>
+                                <td id="order-material" class="cell">
+                                    <select name="material" id="material&{{order.order.id}}">
+                                        <option value="{{order.order.material}}" disabled selected hidden>{{order.order.material}}</option>
+                                        {% for powder in powders %}
+                                            <option value="{{powder.name}}">{{powder.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td id="model-volume" class="cell">
+                                    <input type="number" class="input" id="volume&{{order.order.id}}" name="volume" value="{{order.order.volume}}" step="0.01"/>
+                                </td>
+                                <td id="order-cost" class="cell">
+                                    <input type="number" class="input" id="cost&{{order.order.id}}" name="cost" value="{{order.order.cost}}"/>
+                                </td>
+                                <td id="order-start" class="cell">
+                                    <input type="text" class="input" id="date&{{order.order.id}}" name="date" value="{{order.order.date}}" readonly/>
+                                </td>
+                                <td id="order-duration" class="cell">
+                                    <input type="number" class="input" id="duration&{{order.order.id}}" name="duration" value="{{order.order.duration}}"/>
+                                </td>
+                                <td id="select-printer" class="cell">
+                                    <select name="printer" id="printer&{{order.order.id}}" onchange="">
+                                        <option value="{{order.printer}}" disabled selected hidden>{{order.printer}}</option>
+                                        {% for printer in printers %}
+                                            <option value="{{printer}}">{{printer}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td id="ready_cell">
+                                    {% if order.order.ready == True %}
+                                        <input type="checkbox" class="input" id="ready&{{order.order.id}}" name="ready" value="True" onchange="if(this.checked) this.value='False'; else this.value='True';" checked>
+                                    {% else %}
+                                        <input type="checkbox" class="input" id="ready&{{order.order.id}}" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
+                                    {% endif %}
+                                </td>
+                                    <script>
+                                        function getRandomColor() {
+                                            var randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+                                            var r = randomBetween(0, 255);
+                                            var g = randomBetween(0, 255);
+                                            var b = randomBetween(0, 255);
+                                            var color = `rgb(${r},${g},${b}, 0.6)`; // Collect all to a css color string
+                                            return color;
+                                        };
+
+                                        var color = getRandomColor();
+                                        for (const day in {{days}}) {
+
+                                            var printers = document.querySelectorAll('[id^="printer&"]');
+                                            var printer = printers[printers.length - 1].value;
+                                            var printer_elems = document.querySelectorAll('[id="ready_cell"]');
+                                            var printer_elem = printer_elems[printer_elems.length - 1];
+
+                                            var cur_day = parseInt(day) + 1;
+
+                                            var dates = document.querySelectorAll('[id^="date&"]');
+                                            var date = dates[dates.length - 1].value;
+                                            var start_day = parseInt(date.split('-')[2])
+
+                                            var durations = document.querySelectorAll('[id^="duration&"]');
+                                            var duration = parseInt(durations[durations.length - 1].value) - 1;
+
+
+                                            if ((cur_day <= start_day + duration) && (cur_day >= start_day)) {
+                                                var element = document.createElement("td");
+                                                element.width = 30;
+
+                                                element.className = "days_true";
+                                                element.style.background = color;
+
+                                                var newContent = document.createTextNode(printer);
+                                                element.appendChild(newContent);
+                                                if (cur_day == 1) {
+                                                    printer_elem.parentNode.insertBefore(element, printer_elem.nextSibling);
+                                                } else {
+                                                    var tds = document.querySelectorAll('td');
+                                                    var last_td = tds[tds.length - 1];
+                                                    last_td.parentNode.insertBefore(element, last_td.nextSibling);
+                                                }
+
+                                            } else {
+                                                var element = document.createElement("td");
+                                                element.width = 30;
+
+                                                element.className = "days";
+
+
+                                                if (cur_day == 1) {
+                                                    printer_elem.parentNode.insertBefore(element, printer_elem.nextSibling);
+                                                } else {
+                                                    var tds = document.querySelectorAll('td');
+                                                    var last_td = tds[tds.length - 1];
+                                                    last_td.parentNode.insertBefore(element, last_td.nextSibling);
+                                                }
+                                            }
+                                        }
+                                    </script>
+
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <th class="tab-label" id="total_cost_label" scope="row">Итого</th>
+                            <script>
+                                var costs = document.querySelectorAll('[id^="cost&"]');
+                                var total = 0;
+                                for (let i = 0; i < costs.length; i++) {
+                                    total += parseInt(costs[i].value);
+                                }
+                                var label = document.getElementById('total_cost_label');
+                                var total_cost = document.createElement("td");
+                                var newContent = document.createTextNode(total + ' руб.');
+                                total_cost.appendChild(newContent);
+                                label.parentNode.insertBefore(total_cost, label.nextSibling);
+                            </script>
+                    </tfoot>
+                </table>
+            </div>
+
+        </form>
+        <script>
+            $("[id^=date], [id^=duration]").change(function changeDates() {
+                var parent_tr = this.closest('tr').cells;
+                var start_date = parent_tr[7].firstElementChild.value;
+                var duration = parseInt(parent_tr[8].firstElementChild.value);
+                var printer = parent_tr[9].firstElementChild.value;
+                var cur_day = 1;
+                var color = getRandomColor();
+                var white = 'rgb(255, 255, 255)'
+
+                for (let i = 11; i < parent_tr.length; i++) {
+                    if ((cur_day < parseInt(start_date.split('-')[2]) + duration) && (cur_day >= parseInt(start_date.split('-')[2]))) {
+                        parent_tr[i].className = "days_true";
+                        parent_tr[i].style.background = color;
+                        parent_tr[i].innerHTML = printer;
+                    } else {
+                        parent_tr[i].className = "days";
+                        parent_tr[i].style.background = white;
+                        parent_tr[i].innerHTML = '';
+                    };
+                    cur_day++;
+                }
+            });
+        </script>
+        <script>
+            $(".input, [id^=material]").change(function () {
+              var value = $(this).val();
+              var id = this.id;
+              $.ajax({
+                url: '/mycalendar/printing_register',
+                data: {
+                  'value': value,
+                  'id': id,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    alert("A user with this username already exists.");
+                }
+              });
+            });
+        </script>
+        <script>
+                $("[id^=printer]").change(function () {
+                  var printer = $(this).val();
+                  var id = this.id;
+                  $.ajax({
+                    url: '/mycalendar/printing_register',
+                    data: {
+                        'printer': printer,
+                        'id': id,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function (response) {
+                        var id = response.id;
+                        var text = response.text;
+                        var cells = document.getElementById(id).closest('tr').cells;
+                        for (item of cells) {
+                            if (item.className == "days_true") {
+                                item.innerHTML = text;
+                            };
+                        };
+                    }
+                  });
+                });
+        </script>
+            <script>
+                $(document).ready(function Display (){
+                    $('.showimg').on('click', function(){
+
+                        //Trigger FadeToggle function on click
+                        var elem = this.firstElementChild;
+                        $(elem).fadeToggle();
+                    });
+                });
+            </script>
+    <script>
+        $(document).ready(function ShowHide () {
+            $('#show_hide').on('click', function () {
+                var today = new Date();
+                var cur_day = parseInt(today.getDate());
+                var days_elems = document.querySelectorAll('.days, .days_true');
+
+                var days_labels = document.querySelectorAll(".tab_label_days");
+                var orders_num = days_elems.length / days_labels.length;
+
+
+                for (let i = 0; i < days_elems.length - 1; i++) {
+                    if (((i + 1) % days_labels.length < cur_day) && ((i + 1) % days_labels.length != 0)){
+                        days_elems[i].style.display = (days_elems[i].style.display !== "none") ? "none" : "";
+                    };
+                };
+                for (let i = 0; i < cur_day - 1; i++) {
+                    days_labels[i].style.display = (days_labels[i].style.display !== "none") ? "none" : "";
+                };
+            });
+        });
+    </script>
+{% endblock %}

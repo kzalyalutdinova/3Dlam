@@ -1,0 +1,81 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+
+{% block main %}
+
+        <meta charset="UTF-8">
+        <title>Учет порошка</title>
+        {% load static %}
+        <link rel="stylesheet"
+              href="{% static 'style_5.css'%}"
+              type="text/css"/>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+            <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/smoothness/jquery-ui.css" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+
+            <script
+                    src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js" crossorigin="anonymous" referrerpolicy="no-referrer">
+            </script>
+            <script>
+            $(function () {
+                $("#datepicker").datepicker({
+                    dateFormat: "yy-mm-dd",
+                    dayNamesMin: ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"],
+                    monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+                    beforeShowDay: function (d) {
+                        var day = d.getDay();
+                        return [day == 4];
+                    },
+
+                });
+            });
+            </script>
+
+    <div class="block" id="main_content">
+        <form action="" class="material-table" method="post">
+            {% csrf_token %}
+            <div class="block" id="back-button-block">
+                <input type="submit" value="Назад" name="back-button">
+            </div>
+            <div class="block" id="datepicker-block">
+                <label for="datepicker">Дата:</label>
+                <input type="text" id="datepicker" name="datepicker" value="{{today}}"/>
+                <input type="submit" value="Найти">
+            </div>
+            <div class="block" id="table-block">
+                <table id="material-amount-table">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="tab-label">Материал</th>
+                            <th scope="col" class="tab-label">Всего (нетто), кг</th>
+                            <th scope="col" class="tab-label">В закрытых банках, кг</th>
+                            <th scope="col" class="tab-label">Комментарий</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for material in materials %}
+                        <tr>
+                            <th scope="row" id="material-name-cell" class="cell">
+                                <input type="text" id="material-name" name="material-name" value="{{material.name.name}}" readonly>
+                            </th>
+                            <td id="overall-weight-cell" class="cell">
+                                <input type="number" id="overall-weight" name="overall-weight" value="{{material.overall_weight}}" step=".001" required>
+                            </td>
+                            <td id="closed-cans-cell" class="cell">
+                                <input type="number" id="closed-cans" name="closed-cans" value="{{material.closed_cans}}" step=".001" required>
+                            </td>
+                            <td id="comment-cell" class="cell">
+                                <input type="text" id="comment" maxlength="300" name="comment" value="{{material.comment}}">
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="block" id="submit-button-block">
+                <input type="submit" value="Сохранить">
+            </div>
+        </form>
+    </div>
+{% endblock %}

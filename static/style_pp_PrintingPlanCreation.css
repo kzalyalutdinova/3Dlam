@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css?family=Questrial&display=swap");
+
+body {
+  background: white;
+  font-family: "Questrial", sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 900px;
+  justify-content: space-around;
+  color: #2e383f;
+  align-items: center;
+}
+form#back_form {
+    width: 300px;
+    margin-bottom: 0px;
+}
+div#main {
+    width: 100%
+}
+
+div#main_content {
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
+#pp_creation_form{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    border: solid;
+    border-width: 1px;
+    border-radius: 20px;
+    padding-bottom: 10px;
+    border-color: rgba(7, 97, 125, 0.4);
+    justify-content: center;
+}
+
+#pp_creation_main {
+    display: grid;
+
+    align-items: start;
+    justify-content: center;
+    align-content: start;
+    width: 100%;
+
+}
+
+h2.title {
+    text-align: center;
+}
+
+label.label {
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2e383f;
+    background-color: white;
+    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.25);
+}
+
+#ready_block {
+    display: flex;
+    align-self: flex-start;
+}
+
+div.block {
+    display: grid;
+    width: 100%;
+}
+
+.operations_block {
+    display: flex;
+    align-items: flex-start;
+}
+
+.checkbox_label {
+    padding-left: 10px;
+}
+
+#comment_block {
+    align-self: flex-start;
+}
+
+#file_num, #printer, #material, #comment, #priority, #extra_task {
+    width: 100%;
+    height: 70%;
+    border: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    color: #2e383f;
+    background-color: white;
+}
+
+#extra_task {
+    height: 25.19px;
+    margin-bottom: 5px;
+}
+
+#comment {
+    height: 150%;
+}
+
+#submit-block {
+    justify-self: right;
+    width: max-content;
+}
+
+input[type="submit"].button, input[type=file]::file-selector-button {
+    background-color: #07617d;
+    color: #ececeb;
+    border-width: 0px;
+    border-radius: 10px;
+    min-height: 25px;
+    min-width: 100px;
+}
+
+input[type="submit"]:hover, input[type=file]::file-selector-button:hover {
+    background-color: #2e383f;
+}
+
+div.buttons {
+    display: flex;
+    justify-content: space-around;
+    width: 220px;
+}
+
+#back {
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+#new_operation {
+    background-color: white;
+    color: #07617d;
+    font-weight: bold;
+    border-width: 1px;
+    border-radius:10px;
+    border-color: #07617d;
+    min-height: 25px;
+    min-width: 30px;
+    cursor: pointer;
+    margin-left: 153px;
+}

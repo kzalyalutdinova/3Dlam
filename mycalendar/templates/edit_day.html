@@ -1,0 +1,184 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+
+{% block main %}
+
+    <meta charset="UTF-8">
+    <title>Изменение расписания</title>
+    {% load static %}
+    <link rel="stylesheet"
+          href="{% static 'style_editSchedule.css'%}"
+          type="text/css"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <div class="block" id="full_content">
+        <form action="" class="editDay" method="post">
+            {% csrf_token %}
+            <input type="submit" name="back" id="back" value="Назад">
+            <h2 id="date">{{date_name}}</h2>
+            <div id="main_content">
+                <div class="block" id="main_tasks">
+
+                    <div id="user_block">
+                        <label for="user">Имя работника:<br/></label>
+                        <select id="user" name="user">
+                            <option value="{{current_worker.id}}" disabled selected hidden>{{current_worker.name}}</option>
+                            {% for user in users %}
+                            <option value="{{user.id}}">{{user.name}}</option>
+                            {% endfor %}
+                        </select>
+                        <br/>
+                        <br/>
+                    </div>
+                    <div id="task_block">
+                        <table>
+                            <tr>
+                                <th scope="row" id="label" ><label for="task">Задания</label></th>
+                                <td><input type="submit" name="new_task" id="new_task" value="+"></td>
+                            </tr>
+                            {% for job in jobs %}
+                                <tr>
+                                    <th scope="row" id="task" name="task">{{job.name}}</th>
+                                    <td><input type="number" id="times" name="times" min="0" max="1000" value="{{job.times}}"/></td>
+                                </tr>
+                            {% endfor %}
+
+                        </table>
+                    </div>
+                    <div id="comment_block">
+                        </br>
+                        <label for="comment">Комментарий:<br/></label>
+                        <textarea id="comment" name="comment">{{comment}}</textarea>
+                        <br/>
+                    </div>
+                </div>
+                <div class="block" id="extra_tasks">
+                    <label for="extra_tasks">Дополнительные задания</label>
+                    <table>
+                            {% for extra_task in extra_tasks %}
+                                <tr>
+                                    <th scope="row" id="extra_task" name="task">
+                                    {% if extra_task.done == True %}
+                                        <input type="checkbox" class="input" id="extra_ready" name="ready" value="True" onchange="if(this.checked) this.value='True'; else this.value='False';" checked>
+                                    {% else %}
+                                        <input type="checkbox" class="input" id="extra_ready" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
+                                    {% endif %}
+                                    </th>
+                                    <td>{{extra_task.task}}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                </div>
+
+            </div>
+        </form>
+        <script>
+            $("input[type=number]").change(function () {
+                var today = new Date();
+                var current_day = new Date("{{date}}")
+                if (today >= current_day) {
+                    var value = this.value;
+                    var id = this.id;
+                    var job = $(this).closest("tr")[0].cells[0].innerHTML;
+                    $.ajax({
+                        url: '/mycalendar/{{date}}',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': id,
+                            'value': value,
+                            'task': job,
+                        },
+                        dataType: 'json',
+                        type: 'POST',
+                        success: function (data) {
+                            alert(data);
+                        }
+                    });
+                } else {
+                    alert ("Редактировать этот день можно с {{date}}")
+                }
+            });
+        </script>
+        <script>
+            $("#user").change(function () {
+                var today = new Date();
+                var current_day = new Date("{{date}}")
+                if (today >= current_day) {
+                    var i = this.value;
+                    var value = this.children[i].innerHTML;
+                    var id = this.id;
+                    $.ajax({
+                        url: '/mycalendar/{{date}}',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'value': value,
+                            'id': id,
+                        },
+                        dataType: 'json',
+                        type: 'POST',
+                        success: function (data) {
+                            alert(data);
+                        }
+                    });
+                } else {
+                    alert ("Редактировать этот день можно с {{date}}")
+                }
+            });
+        </script>
+        <script>
+            $("#comment").change(function () {
+                var today = new Date();
+                var current_day = new Date("{{date}}")
+                if (today >= current_day) {
+                    var value = $(this).val();
+                    var id = this.id;
+                    $.ajax({
+                        url: '/mycalendar/{{date}}',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'value': value,
+                            'id': id,
+                        },
+                        dataType: 'json',
+                        type: 'POST',
+                        success: function (data) {
+                            alert(data);
+                        }
+                    });
+                } else {
+                    alert ("Редактировать этот день можно с {{date}}")
+                }
+            });
+        </script>
+        <script>
+            $("#extra_ready").change(function () {
+                var today = new Date();
+                var current_day = new Date("{{date}}")
+                if (today >= current_day) {
+                    var value = $(this).val();
+                    var id = this.id;
+                    var job = $(this).closest("tr")[0].cells[1].innerHTML;
+                    $.ajax({
+                        url: '/mycalendar/{{date}}',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'value': value,
+                            'id': id,
+                            'job': job,
+                        },
+                        dataType: 'json',
+                        type: 'POST',
+                        success: function (data) {
+                            alert(data);
+                        }
+                    });
+                } else {
+                    alert ("Редактировать этот день можно с {{date}}")
+                }
+            });
+        </script>
+    </div>
+{% endblock %}

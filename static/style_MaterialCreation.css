@@ -1,0 +1,115 @@
+@import url("https://fonts.googleapis.com/css?family=Questrial&display=swap");
+
+body {
+  background: white;
+  font-family: "Questrial", sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #2e383f;
+  align-items: center;
+}
+
+div#main {
+    width: 100%
+}
+
+div#main_content {
+    justify-content: center;
+}
+
+form#back_form {
+    width: 300px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+}
+form#material_creation, form#printer_creation,  form#extratask_creation{
+    display: grid;
+    grid-template-rows: 60px 70px 70px 40px;
+    align-items: start;
+    justify-content: center;
+    align-content: start;
+    width: 280px;
+    border: solid;
+    border-width: 1px;
+    border-radius: 20px;
+    border-color: rgba(7, 97, 125, 0.4);
+
+}
+
+form#printer_creation {
+    grid-template-rows: 60px 70px 40px;
+}
+
+
+form#extratask_creation {
+    width: 350px;
+    grid-template-rows: 60px 100px 40px;
+}
+
+div#new-task {
+    display: flex;
+    justify-content: center;
+}
+
+textarea#task {
+    justify-self: center;
+    width: 90%;
+    height: 90px;
+}
+
+
+h2.title {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 26px;
+
+}
+
+label.label {
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2e383f;
+    background-color: white;
+    text-shadow: 0 0px 0 rgba(0, 0, 0, 0.25);
+}
+
+div.block {
+    display: grid;
+    width: 98%;
+    margin-left: 2%;
+}
+
+#material_name, #density {
+    border: solid;
+    border-width: 1px;
+    border-radius: 10px;
+    color: #2e383f;
+    background-color: white;
+}
+
+#submit-block {
+    justify-self: right;
+    width: max-content;
+    margin-right: 15px;
+}
+
+input[type="submit"].button {
+    background-color: #07617d;
+    color: #ececeb;
+    border-width: 0px;
+    border-radius: 10px;
+    min-height: 25px;
+    min-width: 100px;
+}
+
+input[type="submit"]:hover, input[type=file]::file-selector-button:hover {
+    background-color: #2e383f;
+}
+#back {
+    width: 100px;
+}
+
+
+

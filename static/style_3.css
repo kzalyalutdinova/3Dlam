@@ -1,0 +1,249 @@
+@import url("https://fonts.googleapis.com/css?family=Questrial&display=swap");
+
+body {
+  background: white;
+  font-family: "Questrial", sans-serif;
+  display: flex;
+  flex-direction: row;
+  gap: 10px 20px;
+  justify-content: space-evenly;
+  height: 900px;
+}
+
+#main_content {
+    display: flex;
+    flex-direction: row;
+    width: 1500px;
+    justify-content: space-around;
+}
+
+input[type="submit"] {
+    background-color: #07617d;
+    color: #ececeb;
+    border-width: 0px;
+    border-radius:10px;
+    min-height:25px;
+    min-width: 100px;
+}
+
+input[type="submit"]:hover {
+    background-color: #2e383f;
+}
+
+div#button-to-table {
+    margin-top: 32px;
+}
+
+#previous-month {
+    position: relative;
+    top: 32px;
+    left: 1px;
+    z-index: 1;
+}
+#next-month {
+    position: relative;
+    top: 32px;
+    left: 859px;
+    z-index: 1;
+}
+
+table {
+    border-width: 0px;
+    position: relative;
+    color: #2e383f;
+}
+
+th.month {
+    font-size: 30px;
+    font-weight: bold;
+    border-width: 0px;
+}
+
+td {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+td:hover {
+    background-color: #ececeb;
+}
+
+ul {
+    text-align: left;
+    font-size: 15px;
+    font-weight: normal;
+    padding-left: 15px
+}
+
+th.mon, th.tue, th.wed, th.thu, th.fri, th.sat, th.sun {
+    background-color: rgba(7, 97, 125, 0.4);
+}
+
+div#calculator {
+    padding: 10px;
+    width: 250px;
+    position: relative;
+    top: 70px;
+
+    display: grid;
+    grid-template-rows: 60px 50px 50px 50px;
+    border: solid;
+    border-color: #07617d;
+    border-radius:  10px;
+}
+#label-for-calculator {
+    width: 250px;
+
+    text-align: center;
+    }
+h3 {
+    margin-top: 0px;
+}
+
+#printer-select-block, #material-select-block, #height-input-block, #count-block {
+    align-content: center;
+}
+
+#printer-select-block, #material-select-block  {
+    display: grid;
+    grid-template-columns: 140px 200px;
+}
+#height {
+    position: relative;
+    left: 140px;
+}
+
+select {
+    height: 20px;
+    width: 101px;
+}
+
+form.calculator {
+    display: grid;
+    justify-items: start;
+    align-items: start;
+    grid-template-rows: 20px 400px 400px;
+}
+
+td[name="powder_day"] {
+    background-color: #F9A828;
+}
+
+td[name="powder_day"]:hover {
+    background-color: #e4a33d;
+}
+
+td[name="optics_day"] {
+    background-color: #D5ED9F;
+}
+
+td[name="optics_day"]:hover {
+    background-color: #d2e5a7;
+}
+
+td[name="cyclone_day"] {
+    background-color: rgba(7, 97, 125, 0.4);
+}
+
+td[name="cyclone_day"]:hover {
+    background-color: rgba(7, 97, 125, 0.5);
+}
+
+td[name="cleaning_day"] {
+    background-color: rgba(160, 35, 52, 0.5)
+}
+
+td[name="cleaning_day"]:hover {
+    background-color: rgba(160, 35, 52, 0.6)
+}
+div.colors {
+    display:flex;
+    justify-content: space-between;
+}
+div.color-title {
+    text-align: left;
+    font-weight: normal;
+    width: 80%;
+    padding: 5px;
+}
+div.color {
+    width: 20%;
+    margin: 10px;
+    border-radius:  10px;
+}
+
+div#color-1 {
+    background-color: #F9A828;
+}
+
+div#color-2 {
+    background-color: #D5ED9F;
+}
+
+div#color-3 {
+    background-color: rgba(7, 97, 125, 0.4);
+}
+
+div#color-4 {
+    background-color: rgba(160, 35, 52, 0.5);
+}
+
+h3#legend-label {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+div.link {
+    margin-top: 10px;
+    margin-left: 10px;
+    text-align: left;
+}
+
+#regulation:hover {
+    text-decoration: underline;
+}
+#regulation {
+    text-decoration: none;
+}
+
+.tooltip-wrap {
+  position: relative;
+}
+.tooltip-wrap .tooltip-content {
+  display: none;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  right: 5%;
+  background-color: #fff;
+  padding: .5em;
+  min-width: 10rem;
+}
+.tooltip-wrap:hover .tooltip-content {
+  display: block;
+}
+
+#info{
+    z-index: 7;
+    position: absolute;
+    left: 10px;
+    top: 100px;
+    width: 190px;
+    padding: 10px;
+    border: solid;
+    border-color: rgba(7, 97, 125, 0.4);
+    border-width: 2px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0px 0px 10px rgb(7, 97, 125);
+}
+
+#info label {
+    padding: 15px;
+}
+
+#inner_text {
+  list-style-type: none;
+}
+

@@ -1,0 +1,104 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+{% block main %}
+        <meta charset="UTF-8">
+        <title>Запланировать печать</title>
+        {% load static %}
+        <link rel="stylesheet"
+              href="{% static 'style_pp_PrintingPlanCreation.css'%}"
+              type="text/css"
+        />
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/css/datepicker.min.css" rel="stylesheet">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.2.0/js/bootstrap-datepicker.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
+
+
+    <div class="block" id="main_content">
+        <form enctype="multipart/form-data" action="" class="back_form" method="post" id="back_form">
+            <div class="block" id="back_block">
+                {% csrf_token %}
+                <input type="submit" class="button" id="back" name="back" value="Назад"/>
+            </div>
+        </form>
+            <form enctype="multipart/form-data" action="" class="printing_plan" method="post" id="pp_creation_form">
+                {% csrf_token %}
+                <h2 class="title" id="label">Планирование печати</h2>
+                <div class="block" id="pp_creation_main">
+                    <div class="block" id="print_file_num">
+                        <label for="file_num" class="label">№ файла</label>
+                        <input type="number" class="input" id="file_num" name="file_num" required min="0"/>
+                    </div>
+                    <div class="block" id="printer_block">
+                        <label for="printer" class="label">Принтер</label>
+                        <select name="printer" id="printer" required>
+                            <option value="" disabled selected hidden>--Выберите принтер--</option>
+                            {% for printer in printers %}
+                                <option value="{{printer.sn}}">{{printer}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="block" id="material-block">
+                        <label for="material" class="label">Материал</label>
+                        <select name="material" id="material" required>
+                            <option value="" disabled selected hidden>--Выберите материал--</option>
+                            {% for powder in powders %}
+                                <option value="{{powder.name}}">{{powder.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="block" id="operations-block">
+                        <label for="operations" class="label">
+                            Операции
+                            <input type="button" name="new_task" id="new_operation" value="+">
+                        </label>
+                        <div class="block" id="operations">
+                            {% for op in standard_operations %}
+                                <div class="operations_block">
+                                    <input type="checkbox" class="input" id="{{op}}" name="operations" value="{{op}}"/>
+                                    <label for="{{op}}" class="checkbox_label">{{op}}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <br/>
+                    </div>
+                    <div class="block" id="comment_block">
+                        <label for="comment" class="label">Комментарии к печати</label>
+                        <input type="text" class="input" id="comment" name="comment" maxlength="200" />
+                        <br/>
+                        <br/>
+                    </div>
+                    <div class="block" id="priority_block">
+                        <label for="priority" class="label">Приоритет</label>
+                        <select name="priority" id="priority" required>
+                            <option value="" disabled selected hidden>--Выберите приоритет--</option>
+                            <option value="1">1-й приоритет</option>
+                            <option value="2">2-й приоритет</option>
+                            <option value="3">3-й приоритет</option>
+                            <option value="0">Термичка</option>
+                        </select>
+                    </div>
+                    <div class="block" id="upload_files">
+                        <input name="drawing" type="file" id="drawing" accept="image/png, image/jpeg" />
+                    </div>
+
+                    <div class="block" id="submit-block">
+                        <input type="submit" class="button" id="submit_button" name="submit_button" value="Сохранить"/>
+                    </div>
+                </div>
+                <script>
+                    $("#new_operation").click(function AddNewTask () {
+                        var operations_block = document.getElementById("operations");
+                        var new_operation = document.createElement("input", {type: "text"});
+                        new_operation.name = "operations";
+                        new_operation.id = "extra_task";
+                        operations_block.appendChild(new_operation);
+
+                    });
+                </script>
+            </form>
+    </div>
+{% endblock %}

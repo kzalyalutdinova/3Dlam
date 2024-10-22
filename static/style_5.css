@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css?family=Questrial&display=swap");
+
+body {
+  background: white;
+  font-family: "Questrial", sans-serif;
+  display: flex;
+  height: 900px;
+  justify-content: center;
+  color: #2e383f;
+}
+
+#main_content {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+form {
+    display: grid;
+    grid-template-rows: 40px 40px 330px 30px;
+    align-items: center;
+    width: 705px;
+}
+
+input[type="number"], input[type="text"] {
+    border-width: 0px;
+    height: 25px;
+}
+
+input[type="number"]:focus-visible, input[type="text"]:focus-visible {
+    outline: 1px solid #2e383f;
+}
+
+input[type="number"]:hover, input[type="text"]:hover  {
+    background-color: #ececeb;
+}
+
+input[type="submit"] {
+    background-color: #07617d;
+    color: #ececeb;
+    border-width: 0px;
+    border-radius:10px;
+    min-height:25px;
+    min-width: 100px;
+}
+
+input[type="submit"]:hover {
+    background-color: #2e383f;
+}
+
+table {
+    border-collapse: collapse;
+
+}
+thead {
+    background-color: rgba(7, 97, 125, 0.4);
+}
+
+th, td {
+  border: 1px solid #2e383f;
+  height: 25px;
+
+}
+
+div#datepicker-block,  #submit-button-block{
+    justify-self: right;
+}
+
+#datepicker {
+    width: 120px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2e383f;
+}
+
+.ui-datepicker thead {
+    background-color: #f7f7f7;
+}
+
+#noresult {
+    justify-self: center;
+}

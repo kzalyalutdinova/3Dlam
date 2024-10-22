@@ -1,0 +1,51 @@
+{% load static %}
+<html>
+<head>
+	<link  rel='stylesheet' type='text/css' href="/static/inc/css/lam.css">
+	
+	<script  src="https://code.jquery.com/jquery-3.6.4.js"  integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="  crossorigin="anonymous"></script>
+	<script language="javascript" src="/static/inc/js/vendor/qrcodejs/qrcode.js"></script>
+	<script language="javascript" src="/static/inc/js/custom/main.js"></script>
+	<script language="javascript" src="/static/inc/js/custom/gen_list.js"></script>
+	<script language="javascript" src="/static/inc/js/custom/list.js"></script>
+	<link rel="icon" href="/static/inc/img/fav-zarya.png">
+
+</head>
+
+<body>
+<div id="main">
+	<!-- Тут было что-то незагружаемое -->
+
+
+	<div class="menu">
+	
+		<a href="/users">Printer Jobs</a> &nbsp;&nbsp;
+		<!-- <a href="/days">Printer Jobs - by date</a> &nbsp;&nbsp; -->
+
+		<a href="/opportunity">Opportunity</a> &nbsp;&nbsp;
+
+		<a href="/users_units">Unit Jobs</a> &nbsp;&nbsp;
+		<a href="/default_jobs">Job pattern</a> &nbsp;&nbsp;
+		<a href="/default_types">Job type</a> &nbsp;&nbsp;
+		<a href="/statistic">Big brother mode - workers</a> &nbsp;&nbsp;
+		<a href="/statistic/engineers">Big brother mode - engineers</a> &nbsp;&nbsp;
+		<a href="/del_null_jobs">Delete null jobs</a> &nbsp;&nbsp;
+		<a href="/set_weight_one">Set weight one</a> &nbsp;&nbsp;
+		&emsp;<a href="/navigation/0">Navigation</a>
+		
+		<a href="/accounts/logout/" class=logout>Logout</a>
+		
+	</div>
+
+    {% block main %}
+	{% endblock %}
+
+
+<div id="footer">
+	<a href="/">3DLAM <span class='zarya'>Zarya</span></a> production system (est. 2023).
+</div>
+
+</div>
+</body>
+
+</html>
