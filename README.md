@@ -28,6 +28,7 @@ The table is editable, so an engineer can change order name, customer, material 
 ![orders_table](images/orders_table.png)
 
 The financial statistics shows all orders during some time period (all time, this year, manually set period). Rows of the table can be sorted by clicking on the table header.
+
 ![finantial_statistics](images/finantial_statistics.png)
 
 # Printing Plan
