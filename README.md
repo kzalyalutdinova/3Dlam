@@ -14,6 +14,7 @@ Also, when a mouse hovers a day inside calenda, the popup appears. It shows whic
 
 If the day inside caledar is clicked, the server redirects a user to the page of the day. Operators can edit tasks here. Also, an extra task can be added for a day. Extra tasks are additional tasks, they can't be set automatically because they do now follow task templates.
 ![edit_day](images/edit_day.png)
+
 POST-requests are sent to server using AJAX.
 
 
