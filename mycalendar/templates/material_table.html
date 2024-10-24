@@ -40,7 +40,7 @@
             </div>
             <div class="block" id="datepicker-block">
                 <label for="datepicker">Дата:</label>
-                <input type="text" id="datepicker" name="datepicker" value="{{today}}"/>
+                <input type="text" id="datepicker" name="datepicker" value="{{today|date:'Y-m-d'}}"/>
                 <input type="submit" value="Найти">
             </div>
             <div class="block" id="table-block">

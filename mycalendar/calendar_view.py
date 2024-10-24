@@ -3,6 +3,7 @@ import datetime
 import re
 from decimal import Decimal
 import json
+import pytz
 
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
@@ -12,8 +13,10 @@ from . import schedule_utils as sc
 from .HTML_Calendar import WorkCalendar
 from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.utils.timezone import make_aware
 
 
+"""All views in one place"""
 class CreateSchedule(View):
     template: str = '2_home_page.html'
     date = str(datetime.date.today()).split('-')
@@ -841,6 +844,8 @@ class PrintingPlanCreationView(View):
         self.context['printers'] = Printer.objects.all()
         self.context['powders'] = Powder.objects.all()
         self.context['standard_operations'] = PPStandardOperations.objects.all()
+        if 'back' or 'submit_button' in request.POST:
+            return redirect(f'/mycalendar/printing_plan')
 
         pp = PrintingPlan.objects.create(file_num=int(request.POST['file_num']),
                                     material=Powder.objects.get(name=request.POST['material']),
@@ -858,15 +863,14 @@ class PrintingPlanCreationView(View):
             pp.operations = json.dumps({'operations': request.POST.getlist('operations')}, ensure_ascii=False)
             pp.save()
 
-        if 'back' or 'submit_button' in request.POST:
-            return redirect(f'/mycalendar/printing_plan')
+
 
         return render(request, self.template, self.context)
 
 
 class PrintingPlanView(View):
     template = 'pp_PrintingPlanTable.html'
-    context = {'items': []}
+    context = {'items': [], 'current_printer': Printer.objects.all()[0]}
 
     def get(self, request):
         print(request.GET)
@@ -874,20 +878,11 @@ class PrintingPlanView(View):
         self.context['powders'] = Powder.objects.all()
         self.context['items'] = []
 
-        if 'printer' in request.GET:
-            printer = Printer.objects.get(sn=int(request.GET['printer']))
-            self.context['items'] = []
-            for item in PrintingPlan.objects.filter(printer=printer):
-                try:
-                    drawing = PPDrawing.objects.get(pp=item).file
-                except ObjectDoesNotExist:
-                    drawing = None
-                self.context['items'].append({'item': item,
-                                              'drawing': drawing,
-                                              'operations': json.loads(item.operations)['operations']})
-            return render(request, self.template, self.context)
+        if 'search_button' in request.GET:
+            sn = re.findall(r'\((.*?)\)', request.GET['printer'])[0]
+            self.context['current_printer'] = Printer.objects.get(sn=sn)
 
-        for item in PrintingPlan.objects.filter(printer=self.context['printers'][0]):
+        for item in PrintingPlan.objects.filter(printer=self.context['current_printer']):
             try:
                 drawing = PPDrawing.objects.get(pp=item).file
             except ObjectDoesNotExist:
@@ -896,8 +891,35 @@ class PrintingPlanView(View):
                                           'drawing':drawing,
                                           'operations': json.loads(item.operations)['operations']})
 
-
         return render(request, self.template, self.context)
 
     def post(self, request):
+        print(request.POST)
+        if 'id' in request.POST:
+            item = PrintingPlan.objects.get(id=int(request.POST['id']))
+            if 'ready' not in request.POST:
+                attr = request.POST['attr']
+                if attr == 'material':
+                    value = Powder.objects.get(name=request.POST['value'])
+                elif attr == 'file_num':
+                    value = int(request.POST['value'])
+                else:
+                    value = request.POST['value']
+                setattr(item, attr, value)
+            else:
+                if request.POST['ready'] == 'True':
+                    item.ready = True
+                    item.datetime_end = pytz.timezone('Europe/Moscow').localize(
+                        datetime.datetime.strptime(request.POST['datetime_end'],'%d.%m.%Y, %H:%M:%S'))
+                else:
+                    item.ready = False
+                    item.datetime_end = None
+            item.save()
+        elif 'new_pp' in request.POST:
+            return redirect(f'/mycalendar/printing_plan/new_print')
+        elif 'new_material' in request.POST:
+            return redirect('/mycalendar/printing_register/new_material')
+        elif 'new_printer' in request.POST:
+            return redirect('/mycalendar/printing_register/new_printer')
+
         return render(request, self.template, self.context)

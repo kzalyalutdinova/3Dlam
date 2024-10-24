@@ -1,0 +1,125 @@
+@import url("https://fonts.googleapis.com/css?family=Questrial&display=swap");
+
+body {
+  background: white;
+  font-family: "Questrial", sans-serif;
+  display: flex;
+  height: 900px;
+  color: #2e383f;
+  width: 3000px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    margin-top: 10px !important;
+}
+
+form#search_form {
+    margin-bottom: 10px !important;
+}
+#printer {
+    width: 270px;
+    margin-right: 10px;
+    margin-left: 7px;
+}
+
+#table-block {
+    margin-left: 7px;
+}
+
+#new {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-bottom: 15px;
+
+}
+
+#new_pp_block, #newmaterial-block, #newprinter-block {
+    margin-right: 10px;
+}
+
+#new_pp_block {
+    margin-left: 5px;
+}
+
+table#printing_register_table {
+    border-collapse: collapse;
+    table-layout: auto;
+    border-width: 1px !important;
+
+}
+
+.tab-label, .tab_label_days {
+    background-color: rgba(7, 97, 125, 0.4);
+}
+
+th, td {
+  border: 1px solid #2e383f;
+}
+
+td[id^="operations"] {
+    width: 230px;
+    padding-left: 5px;
+}
+
+td[id^="datetime_end"] {
+    width: 100px;
+    padding-left: 5px;
+}
+
+select[id^="material"] {
+    width: 200px;
+    border-width: 0px;
+}
+select[id^="priority"] {
+    width: 125px;
+}
+
+input[type="number"].input {
+    width: 100px;
+    border-width: 0px;
+}
+
+
+.button {
+    background-color: #07617d;
+    color: #ececeb;
+    border-width: 0px;
+    border-radius:10px;
+    min-height:25px;
+    min-width: 100px;
+}
+
+.button:hover {
+    background-color: #2e383f;
+}
+
+.showimg {
+    cursor: pointer !important;
+}
+
+#ready_cell {
+    justify-items: center;
+}
+
+input[type="checkbox"] {
+    width: 65px !important;
+    height: 20px;
+}
+
+input.input, select.input, textarea.input{
+    border-width: 0px !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0) !important;
+    margin-bottom: 0px;
+}
+
+textarea.input {
+    height: 50px !important;
+    width: 500px !important;
+    font-size: medium;
+}

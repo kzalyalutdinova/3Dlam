@@ -8,7 +8,7 @@
         {% load static %}
 
         <link rel="stylesheet"
-              href="{% static 'style_OrdersTable.css'%}"
+              href="{% static 'style_PPTable.css'%}"
               type="text/css"
         />
 
@@ -26,16 +26,30 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
 
-        <form action="" class="printing_register" method="post">
-            {% csrf_token %}
+        <form action="" class="printing_register" method="get" id="search_form">
             <div class="block" id="printer_block">
                 <div class="block">
                     <select name="printer" id="printer">
-                        <option value="{{printers.0}}" label="{{printers.0}}" disabled selected hidden></option>
+                        <option value="{{current_printer}}" label="{{current_printer}}" disabled selected hidden></option>
                             {% for printer in printers %}
                                 <option value="{{printer}}">{{printer}}</option>
                             {% endfor %}
                     </select>
+                    <input type="submit" class="button" id="search_button" name="search_button" value="Найти"/>
+                </div>
+            </div>
+        </form>
+        <form action="" class="printing_register" method="post">
+            {% csrf_token %}
+            <div class="block" id="new">
+                <div class="block" id="new_pp_block">
+                    <input type="submit" class="button" id="new_pp" name="new_pp" value="+ Новая запись"/>
+                </div>
+                <div class="block" id="newmaterial-block">
+                    <input type="submit" class="button" id="new_material" name="new_material" value="+ Новый материал"/>
+                </div>
+                <div class="block" id="newprinter-block">
+                    <input type="submit" class="button" id="new_printer" name="new_printer" value="+ Новый принтер"/>
                 </div>
             </div>
             <div class="block" id="table-block">
@@ -46,10 +60,11 @@
                             <th scope="col" class="tab-label">Изображение</th>
                             <th scope="col" class="tab-label">Материал</th>
                             <th scope="col" class="tab-label">Операции</th>
-                            <th scope="col" class="tab-label">Комментарии</th>
+
                             <th scope="col" class="tab-label">Приоритет</th>
                             <th scope="col" class="tab-label">Готово</th>
                             <th scope="col" class="tab-label">Дата и время окончания</th>
+                            <th scope="col" class="tab-label">Комментарии</th>
                         </tr>
                    </thead>
                     <tbody>
@@ -66,7 +81,7 @@
                                     </a>
                                 </td>
 
-                                <td id="material_cell" class="cell">
+                                <td id="cell_material" class="cell">
                                     <select name="material" id="material&{{item.item.id}}">
                                         <option value="{{item.item.material}}" disabled selected hidden>{{item.item.material}}</option>
                                         {% for powder in powders %}
@@ -79,12 +94,9 @@
                                         <div class="operation">{{operation}}</div>
                                     {% endfor %}
                                 </td>
-                                <td id="comments" class="cell">
-
-                                </td>
-                                <td id="priority_cell" class="cell">
-                                    <select name="priority" id="priority&{{item.item.id}}">
-                                        <option value="" disabled selected hidden>{{item.item.priority}}</option>
+                                <td id="cell_priority" class="cell">
+                                    <select name="priority" id="priority&{{item.item.id}}" class="input">
+                                        <option value="{{item.item.priority}}" disabled selected hidden>{{item.item.get_priority_display}}</option>
                                         <option value="1">1-й приоритет</option>
                                         <option value="2">2-й приоритет</option>
                                         <option value="3">3-й приоритет</option>
@@ -92,13 +104,20 @@
                                     </select>
                                 </td>
                                 <td id="ready_cell">
-                                    {% if order.order.ready == True %}
+                                    {% if item.item.ready == True %}
                                         <input type="checkbox" class="input" id="ready&{{item.item.id}}" name="ready" value="True" onchange="if(this.checked) this.value='False'; else this.value='True';" checked>
                                     {% else %}
                                         <input type="checkbox" class="input" id="ready&{{item.item.id}}" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
                                     {% endif %}
                                 </td>
-                                <td id="datetime_end&{{item.item.id}}" class="cell"></td>
+                                <td id="datetime_end&{{item.item.id}}" class="cell">
+                                    {% if item.item.datetime_end != None %}
+                                        {{item.item.datetime_end|date:'d.m.Y H:i'}}
+                                    {% endif %}
+                                </td>
+                                <td id="cell_comments" class="cell">
+                                    <textarea id="comments&{{item.item.id}}" class="input" maxlength="200">{{item.item.comments}}</textarea>
+                                </td>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -140,15 +159,18 @@
                 })
             </script>
             <script>
-                $("#printer").change(function () {
+                $("[id^=file_num], [id^=material], [id^=comments], [id^=priority]").change(function () {
+                    var attr = this.id.split("&")[0];
+                    var id = this.id.split("&")[1];
                     var value = $(this).val();
-                    var id = value.match(/\((.*?)\)/g);
-                    var sn = id[0].substring(1, id[0].length - 1);
                     $.ajax({
                         url: '/mycalendar/printing_plan',
-                        type: 'GET',
+                        type: 'POST',
                         data: {
-                            'printer': sn,
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': id,
+                            'attr': attr,
+                            'value': value
                         },
                         dataType: 'json',
                         success: function () {
