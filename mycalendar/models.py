@@ -162,7 +162,7 @@ class PrintingPlan(models.Model):
     class Meta:
         verbose_name = "Printing Plan"
         verbose_name_plural = "Printing Plan"
-        ordering = ['-id']
+        ordering = ['id']
 
 
 class PPDrawing(models.Model):

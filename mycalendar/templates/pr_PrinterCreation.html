@@ -17,7 +17,7 @@
         <form enctype="multipart/form-data" action="" class="back_form" method="post" id="back_form">
             <div class="block" id="back_block">
                 {% csrf_token %}
-                <input type="submit" class="button" id="back" name="back" value="Назад"/>
+                <input type="button" class="button" id="back" name="back" value="Назад" onclick="history.back()"/>
             </div>
         </form>
             <form enctype="multipart/form-data" action="" class="printing_register" method="post" id="printer_creation">

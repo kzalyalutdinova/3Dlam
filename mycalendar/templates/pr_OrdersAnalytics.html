@@ -49,7 +49,7 @@
         <form action="" class="printing_register" method="post">
             {% csrf_token %}
             <div class="block" id="back_block">
-                <input type="submit" class="button" id="back" name="back" value="Назад"/>
+                <input type="button" class="button" id="back" name="back" value="Назад" onclick="history.back()"/>
             </div>
             <div class="block" id="filter-block">
                 {% csrf_token %}

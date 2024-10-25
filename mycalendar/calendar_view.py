@@ -647,9 +647,6 @@ class CustomerAnalyticsView(View):
         return render(request, self.template, self.context)
 
     def post(self, request):
-        if 'back' in request.POST:
-            return redirect(f'/mycalendar/printing_register')
-
         if 'filter' in request.POST:
             self.context['customers'] = []
 
@@ -736,15 +733,10 @@ class CustomerAnalyticsView(View):
 
 class NewMaterialView(View):
     template = 'pr_MaterialCreation.html'
-
-
     def get(self, request):
         return render(request, self.template)
 
     def post(self, request):
-        if 'back' in request.POST:
-            return redirect(f'/mycalendar/printing_register')
-
         if request.POST['material_name'].strip():
             try:
                 powder = Powder.objects.get(name=request.POST['material_name'])
@@ -766,10 +758,6 @@ class NewOrderView(View):
         return render(request, self.template, self.context)
 
     def post(self, request):
-
-        if 'back' in request.POST:
-            return redirect(f'/mycalendar/printing_register')
-
         try:
             today = Day.objects.get(date=request.POST['datepicker'])
         except ObjectDoesNotExist:
@@ -844,8 +832,6 @@ class PrintingPlanCreationView(View):
         self.context['printers'] = Printer.objects.all()
         self.context['powders'] = Powder.objects.all()
         self.context['standard_operations'] = PPStandardOperations.objects.all()
-        if 'back' or 'submit_button' in request.POST:
-            return redirect(f'/mycalendar/printing_plan')
 
         pp = PrintingPlan.objects.create(file_num=int(request.POST['file_num']),
                                     material=Powder.objects.get(name=request.POST['material']),
@@ -860,10 +846,13 @@ class PrintingPlanCreationView(View):
             PPDrawing.objects.create(pp=pp, file=request.FILES['drawing'])
 
         if 'operations' in request.POST:
-            pp.operations = json.dumps({'operations': request.POST.getlist('operations')}, ensure_ascii=False)
+            pp.operations = json.dumps({'operations':
+                                            [op for op in request.POST.getlist('operations') if op and op.strip()]},
+                                       ensure_ascii=False)
             pp.save()
 
-
+        if 'submit_button' in request.POST:
+            return redirect(f'/mycalendar/printing_plan')
 
         return render(request, self.template, self.context)
 

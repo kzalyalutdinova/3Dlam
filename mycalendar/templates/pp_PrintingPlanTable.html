@@ -67,7 +67,7 @@
                             <th scope="col" class="tab-label">Комментарии</th>
                         </tr>
                    </thead>
-                    <tbody>
+                    <tbody id="tbody">
                         {% for item in items %}
                             <tr>
                                 <th scope="row" id="file_cell" class="cell">
@@ -80,7 +80,6 @@
                                         </div>
                                     </a>
                                 </td>
-
                                 <td id="cell_material" class="cell">
                                     <select name="material" id="material&{{item.item.id}}">
                                         <option value="{{item.item.material}}" disabled selected hidden>{{item.item.material}}</option>
@@ -117,6 +116,9 @@
                                 </td>
                                 <td id="cell_comments" class="cell">
                                     <textarea id="comments&{{item.item.id}}" class="input" maxlength="200">{{item.item.comments}}</textarea>
+                                </td>
+                                <td id="cell_hide" class="cell" >
+                                    <input type="button" id="hide" name="hide" class="button" value="Скрыть" onclick="hideRow()"/>
                                 </td>
                         {% endfor %}
                     </tbody>
@@ -178,6 +180,41 @@
                         }
                     });
                 })
+            </script>
+            <script>
+                $(document).ready(function() {
+                    var tbody = document.getElementById('tbody');
+                    var trs = tbody.children;
+                    var prev_material = '';
+
+                    for (tr of trs) {
+                        var curr_material = tr.children[2].children[0].value;
+                        if (prev_material == '') {
+                            prev_material = curr_material;
+                        } else {
+                            if (prev_material != curr_material) {
+                                var new_tr = document.createElement('tr');
+                                var new_td = document.createElement('td');
+                                new_td.className = 'switching';
+                                new_td.setAttribute("colspan", "8");
+                                new_td.innerText = 'Переход на ' + curr_material + '\nФильтр\nОптика';
+                                new_tr.appendChild(new_td);
+                                tbody.insertBefore(new_tr, tr);
+                                prev_material = curr_material;
+                            };
+                        };
+                    };
+                });
+            </script>
+            <script>
+                function hideRow() {
+                    var tr = event.target.closest('tr');
+                    var tr_next = tr.previousSibling.cells[0];
+                    if (tr_next.className == 'switching') {
+                        tr_next.style.display = 'none';
+                    };
+                    tr.style.display = 'none';
+                }
             </script>
         </form>
 {% endblock %}
