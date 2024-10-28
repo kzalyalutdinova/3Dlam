@@ -158,6 +158,7 @@ class PrintingPlan(models.Model):
     ready = models.BooleanField(_('Is it ready?'), default=False, blank=False)
     datetime_end = models.DateTimeField(_('End date and time of the printing'), blank=True, null=True)
     priority = models.CharField(_('Priority'), max_length=1, choices=CHOICES_PRIORITY)
+    hidden = models.BooleanField(_('Is it hidden in the table'), default=False, blank=False)
 
     class Meta:
         verbose_name = "Printing Plan"

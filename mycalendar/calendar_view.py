@@ -892,8 +892,14 @@ class PrintingPlanView(View):
                     value = Powder.objects.get(name=request.POST['value'])
                 elif attr == 'file_num':
                     value = int(request.POST['value'])
-                else:
+                elif attr == 'operations':
+                    operations = request.POST.getlist('value[]')
+                    operations.extend(json.loads(item.operations)['operations'])
+                    value = json.dumps({'operations': operations}, ensure_ascii=False)
+                elif attr == 'comments':
                     value = request.POST['value']
+                else:
+                    value = json.loads(request.POST['value'])
                 setattr(item, attr, value)
             else:
                 if request.POST['ready'] == 'True':

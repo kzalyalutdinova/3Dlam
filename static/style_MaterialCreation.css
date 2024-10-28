@@ -95,7 +95,8 @@ div.block {
     margin-right: 15px;
 }
 
-input[type="submit"].button {
+input[type="submit"].button,
+input[type="button"].button {
     background-color: #07617d;
     color: #ececeb;
     border-width: 0px;
@@ -104,7 +105,9 @@ input[type="submit"].button {
     min-width: 100px;
 }
 
-input[type="submit"]:hover, input[type=file]::file-selector-button:hover {
+input[type="submit"]:hover,
+input[type=file]::file-selector-button:hover,
+input[type="button"]:hover {
     background-color: #2e383f;
 }
 #back {

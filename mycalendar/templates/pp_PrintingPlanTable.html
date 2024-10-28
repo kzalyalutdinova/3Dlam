@@ -65,61 +65,69 @@
                             <th scope="col" class="tab-label">Готово</th>
                             <th scope="col" class="tab-label">Дата и время окончания</th>
                             <th scope="col" class="tab-label">Комментарии</th>
+                            <th scope="col" class="showbtn">
+                                <input type="button" id="show" name="show" class="button" value="Показать все" onclick="showRows()"/>
+                            </th>
                         </tr>
                    </thead>
                     <tbody id="tbody">
                         {% for item in items %}
-                            <tr>
-                                <th scope="row" id="file_cell" class="cell">
-                                    <input type="number" class="input" id="file_num&{{item.item.id}}" name="file_num" value="{{item.item.file_num}}"/>
-                                </th>
-                                <td id="drawing_cell" class="cell">
-                                    <a class='showimg'>Показать
-                                        <div class='image-container' id="image-container&{{item.item.id}}" style='display:none;'>
-                                                <img style="width:100%; height:100%" src="../static/media/{{item.drawing}}"/>
-                                        </div>
-                                    </a>
-                                </td>
-                                <td id="cell_material" class="cell">
-                                    <select name="material" id="material&{{item.item.id}}">
-                                        <option value="{{item.item.material}}" disabled selected hidden>{{item.item.material}}</option>
-                                        {% for powder in powders %}
-                                            <option value="{{powder}}">{{powder}}</option>
+                            {% if item.item.hidden == True %}
+                                <tr style="display: none;">
+                            {% else %}
+                                <tr>
+                            {% endif %}
+                                    <th scope="row" id="file_cell" class="cell">
+                                        <input type="number" class="input" id="file_num&{{item.item.id}}" name="file_num" value="{{item.item.file_num}}"/>
+                                    </th>
+                                    <td id="drawing_cell" class="cell">
+                                        <a class='showimg'>Показать
+                                            <div class='image-container' id="image-container&{{item.item.id}}" style='display:none;'>
+                                                    <img style="width:100%; height:100%" src="../static/media/{{item.drawing}}"/>
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td id="cell_material" class="cell">
+                                        <select name="material" id="material&{{item.item.id}}">
+                                            <option value="{{item.item.material}}" disabled selected hidden>{{item.item.material}}</option>
+                                            {% for powder in powders %}
+                                                <option value="{{powder}}">{{powder}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td id="operations&{{item.item.id}}" class="cell">
+                                        {% for operation in item.operations %}
+                                            <div class="operation">{{operation}}</div>
                                         {% endfor %}
-                                    </select>
-                                </td>
-                                <td id="operations&{{item.item.id}}" class="cell">
-                                    {% for operation in item.operations %}
-                                        <div class="operation">{{operation}}</div>
-                                    {% endfor %}
-                                </td>
-                                <td id="cell_priority" class="cell">
-                                    <select name="priority" id="priority&{{item.item.id}}" class="input">
-                                        <option value="{{item.item.priority}}" disabled selected hidden>{{item.item.get_priority_display}}</option>
-                                        <option value="1">1-й приоритет</option>
-                                        <option value="2">2-й приоритет</option>
-                                        <option value="3">3-й приоритет</option>
-                                        <option value="0">Термичка</option>
-                                    </select>
-                                </td>
-                                <td id="ready_cell">
-                                    {% if item.item.ready == True %}
-                                        <input type="checkbox" class="input" id="ready&{{item.item.id}}" name="ready" value="True" onchange="if(this.checked) this.value='False'; else this.value='True';" checked>
-                                    {% else %}
-                                        <input type="checkbox" class="input" id="ready&{{item.item.id}}" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
-                                    {% endif %}
-                                </td>
-                                <td id="datetime_end&{{item.item.id}}" class="cell">
-                                    {% if item.item.datetime_end != None %}
-                                        {{item.item.datetime_end|date:'d.m.Y H:i'}}
-                                    {% endif %}
-                                </td>
-                                <td id="cell_comments" class="cell">
-                                    <textarea id="comments&{{item.item.id}}" class="input" maxlength="200">{{item.item.comments}}</textarea>
-                                </td>
-                                <td id="cell_hide" class="cell" >
-                                    <input type="button" id="hide" name="hide" class="button" value="Скрыть" onclick="hideRow()"/>
-                                </td>
+                                    </td>
+                                    <td id="cell_priority" class="cell">
+                                        <select name="priority" id="priority&{{item.item.id}}" class="input">
+                                            <option value="{{item.item.priority}}" disabled selected hidden>{{item.item.get_priority_display}}</option>
+                                            <option value="1">1-й приоритет</option>
+                                            <option value="2">2-й приоритет</option>
+                                            <option value="3">3-й приоритет</option>
+                                            <option value="0">Термичка</option>
+                                        </select>
+                                    </td>
+                                    <td id="ready_cell">
+                                        {% if item.item.ready == True %}
+                                            <input type="checkbox" class="input" id="ready&{{item.item.id}}" name="ready" value="True" onchange="if(this.checked) this.value='False'; else this.value='True';" checked>
+                                        {% else %}
+                                            <input type="checkbox" class="input" id="ready&{{item.item.id}}" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
+                                        {% endif %}
+                                    </td>
+                                    <td id="datetime_end&{{item.item.id}}" class="cell">
+                                        {% if item.item.datetime_end != None %}
+                                            {{item.item.datetime_end|date:'d.m.Y H:i'}}
+                                        {% endif %}
+                                    </td>
+                                    <td id="cell_comments" class="cell">
+                                        <textarea id="comments&{{item.item.id}}" class="input" maxlength="200">{{item.item.comments}}</textarea>
+                                    </td>
+                                    <td id="cell_hide" class="cell" >
+                                        <input type="button" id="hide" name="hide" class="button" value="Скрыть" onclick="hideRow()"/>
+                                    </td>
+                                </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -192,16 +200,43 @@
                         if (prev_material == '') {
                             prev_material = curr_material;
                         } else {
+                            var td_operations = tr.children[3];
+                            var ops = new Array("---", "Оптика", "Фильтр", "Переход на " + curr_material);
                             if (prev_material != curr_material) {
-                                var new_tr = document.createElement('tr');
-                                var new_td = document.createElement('td');
-                                new_td.className = 'switching';
-                                new_td.setAttribute("colspan", "8");
-                                new_td.innerText = 'Переход на ' + curr_material + '\nФильтр\nОптика';
-                                new_tr.appendChild(new_td);
-                                tbody.insertBefore(new_tr, tr);
-                                prev_material = curr_material;
+                                if (td_operations.children[0].innerText.startsWith('Переход на ') != new Boolean('true')) {
+                                    for (i of ops) {
+                                        var new_div = document.createElement('div');
+                                        new_div.innerText = i;
+                                        new_div.style.color = "red";
+                                        td_operations.insertBefore(new_div, td_operations.firstChild)
+                                    }
+                                    $.ajax({
+                                        url: '/mycalendar/printing_plan',
+                                        type: 'POST',
+                                        data: {
+                                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                                            'id': td_operations.id.split('&')[1],
+                                            'attr': 'operations',
+                                            'value': ops.slice(1).reverse()
+                                        },
+                                        dataType: 'json',
+                                        success: function () {
+                                            alert('Done');
+                                        }
+                                    });
+                                } else {
+                                    for (i = 0; i < 3; i++) {
+                                        td_operations.children[i].style.color = "red";
+                                        if (i == 2) {
+                                            var new_div = document.createElement('div');
+                                            new_div.innerText = '---';
+                                            new_div.style.color = "red";
+                                            td_operations.insertBefore(new_div, td_operations.children[3])
+                                        };
+                                    };
+                                };
                             };
+                            prev_material = curr_material;
                         };
                     };
                 });
@@ -209,11 +244,52 @@
             <script>
                 function hideRow() {
                     var tr = event.target.closest('tr');
-                    var tr_next = tr.previousSibling.cells[0];
-                    if (tr_next.className == 'switching') {
-                        tr_next.style.display = 'none';
+                    var tr_next = tr.previousElementSibling;
+                    if (tr_next !== null) {
+                        var tr_prev = tr_next.cells[0];
+                        if (tr_prev.className == 'switching') {
+                            tr_prev.style.display = 'none';
+                        };
                     };
                     tr.style.display = 'none';
+                    $.ajax({
+                        url: '/mycalendar/printing_plan',
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': tr.cells[0].children[0].id.split('&')[1],
+                            'attr': 'hidden',
+                            'value': new Boolean(true)
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            alert('Done');
+                        }
+                    });
+                }
+            </script>
+            <script>
+                function showRows() {
+                    var trs = document.getElementsByTagName("tr");
+                    for (tr of trs) {
+                        if (tr.style.display == "none") {
+                            tr.style.display = "";
+                            $.ajax({
+                                url: '/mycalendar/printing_plan',
+                                type: 'POST',
+                                data: {
+                                    'csrfmiddlewaretoken': '{{csrf_token}}',
+                                    'id': tr.cells[0].children[0].id.split('&')[1],
+                                    'attr': 'hidden',
+                                    'value': new Boolean(false)
+                                },
+                                dataType: 'json',
+                                success: function () {
+                                    alert('Done');
+                                }
+                            });
+                        };
+                    };
                 }
             </script>
         </form>

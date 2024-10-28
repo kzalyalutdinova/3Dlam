@@ -61,6 +61,15 @@ table#printing_register_table {
 th, td {
   border: 1px solid #2e383f;
 }
+.showbtn {
+    border: 0px;
+}
+
+td.switching {
+    text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
 td[id^="operations"] {
     width: 230px;
@@ -72,12 +81,20 @@ td[id^="datetime_end"] {
     padding-left: 5px;
 }
 
+td#cell_hide {
+    border: 0px;
+    padding-left: 10px;
+}
+
 select[id^="material"] {
     width: 200px;
     border-width: 0px;
 }
+
 select[id^="priority"] {
-    width: 125px;
+    width: 140px;
+    font-size: medium;
+
 }
 
 input[type="number"].input {
@@ -99,8 +116,24 @@ input[type="number"].input {
     background-color: #2e383f;
 }
 
+#hide, #show {
+    background-color: white;
+    color: #07617d;
+    font-weight: bold;
+    border-width: 1px;
+    border-radius:10px;
+    border-color: #07617d;
+    min-height:25px;
+    min-width: 25px;
+}
+
+#show {
+    margin-left: 10px;
+}
+
 .showimg {
     cursor: pointer !important;
+    margin-left: 18px;
 }
 
 #ready_cell {
@@ -119,7 +152,7 @@ input.input, select.input, textarea.input{
 }
 
 textarea.input {
-    height: 50px !important;
+    height: 100% !important;
     width: 500px !important;
     font-size: medium;
 }
