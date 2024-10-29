@@ -25,6 +25,7 @@
         <link href="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
         <form action="" class="printing_register" method="get" id="search_form">
             <div class="block" id="printer_block">
@@ -118,14 +119,17 @@
                                     </td>
                                     <td id="datetime_end&{{item.item.id}}" class="cell">
                                         {% if item.item.datetime_end != None %}
-                                            {{item.item.datetime_end|date:'d.m.Y H:i'}}
+                                            {{item.item.datetime_end|date:'d.m.Y, H:i'}}
                                         {% endif %}
                                     </td>
                                     <td id="cell_comments" class="cell">
                                         <textarea id="comments&{{item.item.id}}" class="input" maxlength="200">{{item.item.comments}}</textarea>
                                     </td>
-                                    <td id="cell_hide" class="cell" >
+                                    <td id="cell_hide" class="cell">
                                         <input type="button" id="hide" name="hide" class="button" value="Скрыть" onclick="hideRow()"/>
+                                    </td>
+                                    <td id="cell_delete" class="cell" >
+                                        <input type="button" id="delete" name="delete" class="button" value="Удалить" onclick="deleteRow()"/>
                                     </td>
                                 </tr>
                         {% endfor %}
@@ -150,7 +154,7 @@
                          var now = new Date();
                          datetime.innerText = now.toLocaleString('ru-RU');
                     } else {
-                        datetime.innerText = "";
+                        datetime.innerText = " ";
                     };
                     $.ajax({
                         url: '/mycalendar/printing_plan',
@@ -244,13 +248,6 @@
             <script>
                 function hideRow() {
                     var tr = event.target.closest('tr');
-                    var tr_next = tr.previousElementSibling;
-                    if (tr_next !== null) {
-                        var tr_prev = tr_next.cells[0];
-                        if (tr_prev.className == 'switching') {
-                            tr_prev.style.display = 'none';
-                        };
-                    };
                     tr.style.display = 'none';
                     $.ajax({
                         url: '/mycalendar/printing_plan',
@@ -290,6 +287,25 @@
                             });
                         };
                     };
+                }
+            </script>
+            <script>
+                function deleteRow() {
+                    var tr = event.target.closest('tr');
+                    tr.style.display = 'none';
+                    $.ajax({
+                        url: '/mycalendar/printing_plan',
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': tr.cells[0].children[0].id.split('&')[1],
+                            'delete': 'delete',
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            alert('Done');
+                        }
+                    });
                 }
             </script>
         </form>

@@ -54,7 +54,7 @@ table#printing_register_table {
 
 }
 
-.tab-label, .tab_label_days {
+.tab-label {
     background-color: rgba(7, 97, 125, 0.4);
 }
 
@@ -81,9 +81,10 @@ td[id^="datetime_end"] {
     padding-left: 5px;
 }
 
-td#cell_hide {
+td#cell_hide, td#cell_delete {
     border: 0px;
     padding-left: 10px;
+    width: 90px;
 }
 
 select[id^="material"] {
@@ -116,7 +117,7 @@ input[type="number"].input {
     background-color: #2e383f;
 }
 
-#hide, #show {
+#hide, #show, #delete {
     background-color: white;
     color: #07617d;
     font-weight: bold;
@@ -125,6 +126,11 @@ input[type="number"].input {
     border-color: #07617d;
     min-height:25px;
     min-width: 25px;
+}
+
+#delete {
+    color: rgb(204, 0, 0);
+    border-color: rgb(204, 0, 0);
 }
 
 #show {

@@ -886,7 +886,7 @@ class PrintingPlanView(View):
         print(request.POST)
         if 'id' in request.POST:
             item = PrintingPlan.objects.get(id=int(request.POST['id']))
-            if 'ready' not in request.POST:
+            if 'ready' not in request.POST and 'delete' not in request.POST:
                 attr = request.POST['attr']
                 if attr == 'material':
                     value = Powder.objects.get(name=request.POST['value'])
@@ -901,15 +901,18 @@ class PrintingPlanView(View):
                 else:
                     value = json.loads(request.POST['value'])
                 setattr(item, attr, value)
-            else:
+                item.save()
+            elif 'ready' in request.POST:
                 if request.POST['ready'] == 'True':
                     item.ready = True
                     item.datetime_end = pytz.timezone('Europe/Moscow').localize(
-                        datetime.datetime.strptime(request.POST['datetime_end'],'%d.%m.%Y, %H:%M:%S'))
+                        datetime.datetime.strptime(request.POST['datetime_end'], '%d.%m.%Y, %H:%M:%S'))
                 else:
                     item.ready = False
                     item.datetime_end = None
-            item.save()
+                item.save()
+            else:
+                item.delete()
         elif 'new_pp' in request.POST:
             return redirect(f'/mycalendar/printing_plan/new_print')
         elif 'new_material' in request.POST:
@@ -918,3 +921,6 @@ class PrintingPlanView(View):
             return redirect('/mycalendar/printing_register/new_printer')
 
         return render(request, self.template, self.context)
+
+    class ReadyOrders(View):
+        pass
