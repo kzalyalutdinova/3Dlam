@@ -833,27 +833,31 @@ class PrintingPlanCreationView(View):
         self.context['powders'] = Powder.objects.all()
         self.context['standard_operations'] = PPStandardOperations.objects.all()
 
-        pp = PrintingPlan.objects.create(file_num=int(request.POST['file_num']),
-                                    material=Powder.objects.get(name=request.POST['material']),
-                                    printer=Printer.objects.get(sn=int(request.POST['printer'])),
-                                    priority=request.POST['priority'])
-
-        if request.POST['comment'].strip():
-            pp.comment = request.POST['comment']
-            pp.save()
-
-        if 'drawing' in request.FILES:
-            PPDrawing.objects.create(pp=pp, file=request.FILES['drawing'])
-
-        if 'operations' in request.POST:
-            pp.operations = json.dumps({'operations':
-                                            [op for op in request.POST.getlist('operations') if op and op.strip()]},
-                                       ensure_ascii=False)
-            pp.save()
-
         if 'submit_button' in request.POST:
-            return redirect(f'/mycalendar/printing_plan')
+            pp = PrintingPlan.objects.create(file_num=int(request.POST['file_num']),
+                                             printer=Printer.objects.get(sn=int(request.POST['printer'])),
+                                             priority=request.POST['priority'])
 
+            if request.POST['comment'].strip():
+                pp.comment = request.POST['comment']
+                pp.save()
+
+            if 'drawing' in request.FILES:
+                PPDrawing.objects.create(pp=pp, file=request.FILES['drawing'])
+
+            if 'operations' in request.POST:
+                pp.operations = json.dumps({'operations':
+                                                [op for op in request.POST.getlist('operations') if op and op.strip()]},
+                                           ensure_ascii=False)
+                pp.save()
+            return redirect(f'/mycalendar/printing_plan')
+        elif 'powder' in request.POST:
+            orders = []
+            for item in Order.objects.filter(material=Powder.objects.get(name=request.POST['powder'])):
+                images = [str(img.file) for img in Drawing.objects.filter(order=item)]
+                order = {'name': item.name, 'images': images, 'customer': item.customer.name}
+                orders.append(order)
+            return JsonResponse({'orders': orders})
         return render(request, self.template, self.context)
 
 

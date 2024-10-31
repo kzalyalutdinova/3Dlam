@@ -151,7 +151,8 @@ class PrintingPlan(models.Model):
 
     id = models.AutoField(primary_key=True)
     file_num = models.PositiveSmallIntegerField(_('File №'), null=True)
-    material = models.ForeignKey(Powder, on_delete=models.SET_NULL, null=True)
+    orders = models.ManyToManyField(Order, blank=True)
+    # material = models.ForeignKey(Powder, on_delete=models.SET_NULL, null=True)
     printer = models.ForeignKey(Printer, on_delete=models.SET_NULL, null=True)
     operations = models.JSONField(_('Operations'), blank=True, null=True)
     comments = models.CharField(_('Comments on printing'), max_length=200, blank=True)
@@ -189,3 +190,29 @@ class PPStandardOperations(models.Model):
     class Meta:
         verbose_name = "Standard Operation for Printing Plan"
         verbose_name_plural = "Standard Operations for Printing Plan"
+
+
+class ReadyOrder(models.Model):
+    id = models.AutoField(primary_key=True)
+    amount = models.PositiveSmallIntegerField(_('Amount of details'), default=1)
+    comments = models.CharField(_('Comments on packing'), max_length=200, blank=True)
+    ready = models.BooleanField(_('Is it ready?'), default=False, blank=False)
+
+    class Meta:
+        verbose_name = "Ready order"
+        verbose_name_plural = "Ready orders"
+
+
+class RODrawing(models.Model):
+    id = models.AutoField(primary_key=True)
+    pp = models.ForeignKey(ReadyOrder, on_delete=models.SET_NULL, null=True)
+    file = models.ImageField(_('Drawing for printing plan'),
+                             upload_to=f"printing_plan/ready_orders/",
+                             max_length=1000)
+
+class RegularOrder(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(_('The name of the order'), max_length=100)
+    comments = models.CharField(_('Comments on packing'), max_length=200, blank=True)
+    amount = models.PositiveSmallIntegerField(_('Amount of details'), default=1)
+    ready = models.BooleanField(_('Is it ready?'), default=False, blank=False)

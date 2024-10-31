@@ -23,10 +23,16 @@ div#main_content {
     width: 100%;
     margin-top: 10px;
 }
+
+#full_content {
+    display: flex;
+    flex-direction: row;
+}
+
 #pp_creation_form{
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 700px;
     border: solid;
     border-width: 1px;
     border-radius: 20px;
@@ -66,6 +72,7 @@ label.label {
 div.block {
     display: grid;
     width: 100%;
+    align-items: start;
 }
 
 .operations_block {
@@ -141,3 +148,12 @@ div.buttons {
     cursor: pointer;
     margin-left: 153px;
 }
+
+.name_customer {
+    display: flex;
+}
+
+.order_content {
+    display: flex;
+}
+
