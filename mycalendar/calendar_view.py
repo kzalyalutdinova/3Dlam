@@ -15,6 +15,10 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import make_aware
 
+"""
+def is_master(user):
+    return user.groups.filter(name='Masters').exists()
+"""
 
 """All views in one place"""
 class CreateSchedule(View):
@@ -885,12 +889,24 @@ class PrintingPlanCreationView(View):
 
 class PrintingPlanView(View):
     template = 'pp_PrintingPlanTable.html'
-    context = {'items': [], 'current_printer': Printer.objects.all()[0]}
+    context = {'items': [], 'current_printer': None, 'printers': []}
 
     def get(self, request):
         print(request.GET)
-        self.context['printers'] = Printer.objects.all()
-        self.context['powders'] = Powder.objects.all()
+        print(request.user)
+        print(request.user.is_superuser)
+        self.context['printers'] = []
+        # TODO: разобраться как создавать группы юзеров в Django
+        if request.user.is_superuser:
+            self.context['printers'] = Printer.objects.all()
+        else:
+            for printer in Printer.objects.all():
+                if PrintingPlan.objects.filter(printer=printer, ready=False).exists():
+                    self.context['printers'].append(printer)
+        try:
+            self.context['current_printer'] = self.context['printers'][0]
+        except IndexError:
+            self.context['current_printer'] = Printer.objects.all()[0]
         self.context['items'] = []
 
         if 'search_button' in request.GET:
@@ -906,7 +922,6 @@ class PrintingPlanView(View):
                 material = item.orders.all().first().material.name
             except AttributeError or IndexError:
                 material = 'Не был привязан заказ'
-            print()
             self.context['items'].append({'item': item,
                                           'material': material,
                                           'drawing':drawing,
