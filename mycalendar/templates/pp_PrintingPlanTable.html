@@ -89,12 +89,15 @@
                                         </a>
                                     </td>
                                     <td id="cell_material" class="cell">
+                                        <div class="material">{{item.material}}</div>
+                                        <!---
                                         <select name="material" id="material&{{item.item.id}}">
                                             <option value="{{item.item.material}}" disabled selected hidden>{{item.item.material}}</option>
                                             {% for powder in powders %}
                                                 <option value="{{powder}}">{{powder}}</option>
                                             {% endfor %}
                                         </select>
+                                        --->
                                     </td>
                                     <td id="operations&{{item.item.id}}" class="cell">
                                         {% for operation in item.operations %}
@@ -173,7 +176,7 @@
                 })
             </script>
             <script>
-                $("[id^=file_num], [id^=material], [id^=comments], [id^=priority]").change(function () {
+                $("[id^=file_num], [id^=comments], [id^=priority]").change(function () {
                     var attr = this.id.split("&")[0];
                     var id = this.id.split("&")[1];
                     var value = $(this).val();
@@ -200,47 +203,49 @@
                     var prev_material = '';
 
                     for (tr of trs) {
-                        var curr_material = tr.children[2].children[0].value;
-                        if (prev_material == '') {
-                            prev_material = curr_material;
-                        } else {
-                            var td_operations = tr.children[3];
-                            var ops = new Array("---", "Оптика", "Фильтр", "Переход на " + curr_material);
-                            if (prev_material != curr_material) {
-                                if (td_operations.children[0].innerText.startsWith('Переход на ') != new Boolean('true')) {
-                                    for (i of ops) {
-                                        var new_div = document.createElement('div');
-                                        new_div.innerText = i;
-                                        new_div.style.color = "red";
-                                        td_operations.insertBefore(new_div, td_operations.firstChild)
-                                    }
-                                    $.ajax({
-                                        url: '/mycalendar/printing_plan',
-                                        type: 'POST',
-                                        data: {
-                                            'csrfmiddlewaretoken': '{{csrf_token}}',
-                                            'id': td_operations.id.split('&')[1],
-                                            'attr': 'operations',
-                                            'value': ops.slice(1).reverse()
-                                        },
-                                        dataType: 'json',
-                                        success: function () {
-                                            alert('Done');
-                                        }
-                                    });
-                                } else {
-                                    for (i = 0; i < 3; i++) {
-                                        td_operations.children[i].style.color = "red";
-                                        if (i == 2) {
+                        var curr_material = tr.children[2].children[0].innerText;
+                        if (curr_material != 'Не был привязан заказ') {
+                            if (prev_material == '') {
+                                prev_material = curr_material;
+                            } else {
+                                var td_operations = tr.children[3];
+                                var ops = new Array("---", "Оптика", "Фильтр", "Переход на " + curr_material);
+                                if (prev_material != curr_material) {
+                                    if (td_operations.children[0].innerText.startsWith('Переход на ') != new Boolean('true')) {
+                                        for (i of ops) {
                                             var new_div = document.createElement('div');
-                                            new_div.innerText = '---';
+                                            new_div.innerText = i;
                                             new_div.style.color = "red";
-                                            td_operations.insertBefore(new_div, td_operations.children[3])
+                                            td_operations.insertBefore(new_div, td_operations.firstChild)
+                                        }
+                                        $.ajax({
+                                            url: '/mycalendar/printing_plan',
+                                            type: 'POST',
+                                            data: {
+                                                'csrfmiddlewaretoken': '{{csrf_token}}',
+                                                'id': td_operations.id.split('&')[1],
+                                                'attr': 'operations',
+                                                'value': ops.slice(1).reverse()
+                                            },
+                                            dataType: 'json',
+                                            success: function () {
+                                                alert('Done');
+                                            }
+                                        });
+                                    } else {
+                                        for (i = 0; i < 3; i++) {
+                                            td_operations.children[i].style.color = "red";
+                                            if (i == 2) {
+                                                var new_div = document.createElement('div');
+                                                new_div.innerText = '---';
+                                                new_div.style.color = "red";
+                                                td_operations.insertBefore(new_div, td_operations.children[3])
+                                            };
                                         };
                                     };
                                 };
+                                prev_material = curr_material;
                             };
-                            prev_material = curr_material;
                         };
                     };
                 });

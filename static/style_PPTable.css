@@ -76,6 +76,11 @@ td[id^="operations"] {
     padding-left: 5px;
 }
 
+#cell_material {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 td[id^="datetime_end"] {
     width: 100px;
     padding-left: 5px;
@@ -85,11 +90,6 @@ td#cell_hide, td#cell_delete {
     border: 0px;
     padding-left: 10px;
     width: 90px;
-}
-
-select[id^="material"] {
-    width: 200px;
-    border-width: 0px;
 }
 
 select[id^="priority"] {

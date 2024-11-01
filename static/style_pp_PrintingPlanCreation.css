@@ -157,3 +157,11 @@ div.buttons {
     display: flex;
 }
 
+.name, .customer {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+
+

@@ -62,7 +62,7 @@
                         </div>
                         <div class="block" id="comment_block">
                             <label for="comment" class="label">Комментарии к печати</label>
-                            <input type="text" class="input" id="comment" name="comment" maxlength="200" />
+                            <textarea class="input" id="comment" name="comment" maxlength="200"></textarea>
                             <br/>
                             <br/>
                         </div>
@@ -108,7 +108,8 @@
                             data: {
                                 'csrfmiddlewaretoken': '{{csrf_token}}',
                                 'powder': powder,
-                                'year': today.getFullYear()
+                                'year': today.getFullYear(),
+                                'month': today.getMonth()
                             },
                             dataType: 'json',
                             success: function (data) {
@@ -117,12 +118,16 @@
                                 for (item of data.orders) {
                                     var new_div = document.createElement('div');
                                     new_div.className = 'order_content';
+                                    new_div.style.marginBottom = "7px";
 
                                     var name_customer = document.createElement('div');
                                     name_customer.className = 'name_customer';
 
                                     var check = document.createElement('input');
                                     check.setAttribute('type', 'checkbox');
+                                    check.setAttribute('value', item.id);
+                                    check.setAttribute('name', 'orders');
+
                                     check.style.marginRight = "10px";
                                     new_div.appendChild(check);
 
@@ -130,10 +135,12 @@
                                     name_cust_img.className = 'name_cust_img';
 
                                     var name = document.createElement('div');
-                                    var customer = document.createElement('div');
-                                    var images = document.createElement('div');
                                     name.innerText = item.name;
                                     name.style.marginRight = "10px";
+                                    name.className = 'name';
+
+                                    var customer = document.createElement('div');
+                                    customer.className = 'customer';
                                     customer.innerText = item.customer;
 
                                     name_customer.appendChild(name);
@@ -141,6 +148,7 @@
 
                                     name_cust_img.appendChild(name_customer);
 
+                                    var images = document.createElement('div');
                                     for (image of item.images) {
                                         var img = document.createElement('img');
                                         var path = {% static "" %} + 'media/'+ image

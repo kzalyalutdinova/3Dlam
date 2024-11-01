@@ -839,7 +839,7 @@ class PrintingPlanCreationView(View):
                                              priority=request.POST['priority'])
 
             if request.POST['comment'].strip():
-                pp.comment = request.POST['comment']
+                pp.comments = request.POST['comment']
                 pp.save()
 
             if 'drawing' in request.FILES:
@@ -850,14 +850,36 @@ class PrintingPlanCreationView(View):
                                                 [op for op in request.POST.getlist('operations') if op and op.strip()]},
                                            ensure_ascii=False)
                 pp.save()
+            if 'orders' in request.POST:
+                orders_id = request.POST.getlist('orders')
+                for order_id in orders_id:
+                    order = Order.objects.get(id=int(order_id))
+                    print(order.name)
+                    pp.orders.add(order)
+                    pp.save()
             return redirect(f'/mycalendar/printing_plan')
         elif 'powder' in request.POST:
             orders = []
+            dates = []      # [(месяц (по-русски), год), ...]
+            month = int(request.POST['month'])
+            # Фильтруем заказы по дате и материалу
+            if month - 3 >= 0:
+                for i in sc.months_list[month - 2:month + 1]:
+                    dates.append((i, int(request.POST['year'])))
+            else:
+                for i in sc.months_list[13 + (month - 3):]:
+                    dates.append((i, int(request.POST['year']) - 1))
+                for i in sc.months_list[:month + 1]:
+                    dates.append((i, int(request.POST['year'])))
+
             for item in Order.objects.filter(material=Powder.objects.get(name=request.POST['powder'])):
-                images = [str(img.file) for img in Drawing.objects.filter(order=item)]
-                order = {'name': item.name, 'images': images, 'customer': item.customer.name}
-                orders.append(order)
+                pr = PrintingRegister.objects.get(order=item)
+                if (pr.month, pr.year) in dates:
+                    images = [str(img.file) for img in Drawing.objects.filter(order=item)]
+                    order = {'name': item.name, 'images': images, 'customer': item.customer.name, 'id': item.id}
+                    orders.append(order)
             return JsonResponse({'orders': orders})
+
         return render(request, self.template, self.context)
 
 
@@ -880,7 +902,13 @@ class PrintingPlanView(View):
                 drawing = PPDrawing.objects.get(pp=item).file
             except ObjectDoesNotExist:
                 drawing = None
+            try:
+                material = item.orders.all().first().material.name
+            except AttributeError or IndexError:
+                material = 'Не был привязан заказ'
+            print()
             self.context['items'].append({'item': item,
+                                          'material': material,
                                           'drawing':drawing,
                                           'operations': json.loads(item.operations)['operations']})
 
@@ -892,9 +920,7 @@ class PrintingPlanView(View):
             item = PrintingPlan.objects.get(id=int(request.POST['id']))
             if 'ready' not in request.POST and 'delete' not in request.POST:
                 attr = request.POST['attr']
-                if attr == 'material':
-                    value = Powder.objects.get(name=request.POST['value'])
-                elif attr == 'file_num':
+                if attr == 'file_num':
                     value = int(request.POST['value'])
                 elif attr == 'operations':
                     operations = request.POST.getlist('value[]')
