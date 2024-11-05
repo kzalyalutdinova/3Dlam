@@ -89,7 +89,6 @@ td[id^="datetime_end"] {
 td#cell_hide, td#cell_delete {
     border: 0px;
     padding-left: 10px;
-    width: 90px;
 }
 
 select[id^="priority"] {
@@ -131,10 +130,6 @@ input[type="number"].input {
 #delete {
     color: rgb(204, 0, 0);
     border-color: rgb(204, 0, 0);
-}
-
-#show {
-    margin-left: 10px;
 }
 
 .showimg {
