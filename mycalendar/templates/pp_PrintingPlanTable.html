@@ -84,7 +84,7 @@
                                     <td id="drawing_cell" class="cell">
                                         <a class='showimg'>Показать
                                             <div class='image-container' id="image-container&{{item.item.id}}" style='display:none;'>
-                                                    <img style="width:100%; height:100%" src="../static/media/{{item.drawing}}"/>
+                                                    <img style="width:100%; height:100%" src="/static/media/{{item.drawing}}"/>
                                             </div>
                                         </a>
                                     </td>
@@ -115,7 +115,7 @@
                                     </td>
                                     <td id="ready_cell">
                                         {% if item.item.ready == True %}
-                                            <input type="checkbox" class="input" id="ready&{{item.item.id}}" name="ready" value="True" onchange="if(this.checked) this.value='False'; else this.value='True';" checked>
+                                            <input type="checkbox" class="input" id="ready&{{item.item.id}}" name="ready" value="True" onchange="if(this.checked) this.value='True'; else this.value='False';" checked>
                                         {% else %}
                                             <input type="checkbox" class="input" id="ready&{{item.item.id}}" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
                                         {% endif %}
@@ -157,7 +157,7 @@
                          var now = new Date();
                          datetime.innerText = now.toLocaleString('ru-RU');
                     } else {
-                        datetime.innerText = " ";
+                        datetime.innerText = null;
                     };
                     $.ajax({
                         url: '/mycalendar/printing_plan',

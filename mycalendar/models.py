@@ -194,21 +194,19 @@ class PPStandardOperations(models.Model):
 
 class ReadyOrder(models.Model):
     id = models.AutoField(primary_key=True)
-    amount = models.PositiveSmallIntegerField(_('Amount of details'), default=1)
+    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+    amount = models.PositiveSmallIntegerField(_('Amount of details'), default=0)
     comments = models.CharField(_('Comments on packing'), max_length=200, blank=True)
     ready = models.BooleanField(_('Is it ready?'), default=False, blank=False)
+    hidden = models.BooleanField(_('Is it hidden in the table'), default=False, blank=False)
 
     class Meta:
         verbose_name = "Ready order"
         verbose_name_plural = "Ready orders"
 
+    def __str__(self):
+        return f'{self.order.name}-{self.order.date}'
 
-class RODrawing(models.Model):
-    id = models.AutoField(primary_key=True)
-    pp = models.ForeignKey(ReadyOrder, on_delete=models.SET_NULL, null=True)
-    file = models.ImageField(_('Drawing for printing plan'),
-                             upload_to=f"printing_plan/ready_orders/",
-                             max_length=1000)
 
 class RegularOrder(models.Model):
     id = models.AutoField(primary_key=True)

@@ -952,6 +952,9 @@ class PrintingPlanView(View):
                     item.ready = True
                     item.datetime_end = pytz.timezone('Europe/Moscow').localize(
                         datetime.datetime.strptime(request.POST['datetime_end'], '%d.%m.%Y, %H:%M:%S'))
+                    # Перемещаем напечатанный заказ в модель "Готовые заказы"
+                    for order in item.orders.all():
+                        ReadyOrder.objects.create(order=order)
                 else:
                     item.ready = False
                     item.datetime_end = None
@@ -967,5 +970,42 @@ class PrintingPlanView(View):
 
         return render(request, self.template, self.context)
 
-    class ReadyOrders(View):
-        pass
+
+class ReadyOrdersView(View):
+    template = 'pp_ReadyOrdersTable.html'
+    context = {}
+
+    def get(self, request):
+        print(request.GET)
+        self.context['items'] = []
+        for item in ReadyOrder.objects.all():
+            item = {'item': item,
+                    'drawing': [dr.file for dr in Drawing.objects.filter(order=item.order)]}
+            print(item['drawing'])
+            self.context['items'].append(item)
+        return render(request, self.template, self.context)
+
+    def post(self, request):
+        print(request.POST)
+        item = ReadyOrder.objects.get(id=int(request.POST['id']))
+        if 'delete' in request.POST:
+            pass
+        else:
+            attr = request.POST['attr']
+            if attr == 'amount':
+                value = int(request.POST['value'])
+            elif attr == 'comments':
+                if request.POST['value'].strip():
+                    value = request.POST['value']
+                else:
+                    value = None
+            else:
+                # attr = 'hidden' or 'ready'
+                if request.POST['value'].lower() == 'true':
+                    value = True
+                else:
+                    value = False
+            setattr(item, attr, value)
+            item.save()
+
+        return render(request, self.template, self.context)

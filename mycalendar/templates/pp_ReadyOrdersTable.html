@@ -1,0 +1,182 @@
+{% extends "1_base.html" %}
+{% load static %}
+
+{% block main %}
+{% load static %}
+        <meta charset="UTF-8">
+        <title>Готовые заказы</title>
+
+
+        <link rel="stylesheet"
+              href="{% static 'style_PPTable.css'%}"
+              type="text/css"
+        />
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modalmanager.min.js"></script>
+
+        <form action="" class="printing_register" method="post">
+            {% csrf_token %}
+            <div class="block" id="new">
+                <div class="block" id="new_pp_block">
+                    <input type="submit" class="button" id="new_pp" name="new_pp" value="+ Новая запись"/>
+                </div>
+                <div class="block" id="newmaterial-block">
+                    <input type="submit" class="button" id="new_material" name="new_material" value="+ Новый материал"/>
+                </div>
+                <div class="block" id="newprinter-block">
+                    <input type="submit" class="button" id="new_printer" name="new_printer" value="+ Новый принтер"/>
+                </div>
+            </div>
+            <div class="block" id="table-block">
+                <table id="printing_register_table">
+                   <thead>
+                        <tr>
+                            <th scope="col" class="tab-label">Изображение</th>
+                            <th scope="col" class="tab-label">Наименование</th>
+                            <th scope="col" class="tab-label">Кол-во</th>
+                            <th scope="col" class="tab-label">Комментарии</th>
+                            <th scope="col" class="tab-label">Готово</th>
+                            <th scope="col" class="showbtn">
+                                <input type="button" id="show" name="show" class="button" value="Показать все" onclick="showRows()"/>
+                            </th>
+                        </tr>
+                   </thead>
+                    <tbody id="tbody">
+                        {% for item in items %}
+                            {% if item.item.hidden == True %}
+                                <tr style="display: none;">
+                            {% else %}
+                                <tr>
+                            {% endif %}
+                                    <td id="drawing_cell" class="cell">
+                                        <a class='showimg'>Показать
+                                            <div class='image-container' id="image-container&{{item.item.id}}" style='display:none;'>
+                                                {% for d in item.drawing %}
+                                                    <img style="width:100; height:100" src="/static/media/{{d}}"/>
+                                                {% endfor %}
+                                            </div>
+                                        </a>
+                                    </td>
+                                    <td id="cell_name" class="cell">
+                                        {{item.item.order.name}}
+                                    </td>
+                                    <td id="cell_amount" class="cell">
+                                        <input type="number" class="input" id="amount&{{item.item.id}}" name="amount" value="{{item.item.amount}}"/>
+                                    </td>
+                                    <td id="cell_comments" class="cell">
+                                        <textarea id="comments&{{item.item.id}}" class="input" maxlength="200">{{item.item.comments}}</textarea>
+                                    </td>
+                                    <td id="cell_ready">
+                                        {% if item.item.ready == True %}
+                                            <input type="checkbox" class="input" id="ready&{{item.item.id}}" name="ready" value="True" onchange="if(this.checked) this.value='True'; else this.value='False';" checked>
+                                        {% else %}
+                                            <input type="checkbox" class="input" id="ready&{{item.item.id}}" value="False" onchange="if(this.checked) this.value='True'; else this.value='False';" name="ready">
+                                        {% endif %}
+                                    </td>
+
+                                    <td id="cell_hide" class="cell">
+                                        <input type="button" id="hide" name="hide" class="button" value="Скрыть" onclick="hideRow()"/>
+                                    </td>
+                                    <td id="cell_delete" class="cell" >
+                                        <input type="button" id="delete" name="delete" class="button" value="Удалить" onclick="deleteRow()"/>
+                                    </td>
+                                </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                $(document).ready(function Display (){
+                    $('.showimg').on('click', function(){
+                        //Trigger FadeToggle function on click
+                        var elem = this.firstElementChild;
+                        $(elem).fadeToggle();
+                    });
+                });
+            </script>
+            <script>
+                $("[id^=comments], [id^=amount], [id^=ready]").change(function () {
+                    var attr = this.id.split("&")[0];
+                    var id = this.id.split("&")[1];
+                    var value = $(this).val();
+                    $.ajax({
+                        url: '/mycalendar/printing_plan/ready_orders',
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': id,
+                            'attr': attr,
+                            'value': value
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            alert('Done');
+                        }
+                    });
+                })
+            </script>
+            <script>
+                function hideRow() {
+                    var tr = event.target.closest('tr');
+                    tr.style.display = 'none';
+                    $.ajax({
+                        url: '/mycalendar/printing_plan/ready_orders',
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': tr.cells[2].children[0].id.split('&')[1],
+                            'attr': 'hidden',
+                            'value': new Boolean(true)
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            alert('Done');
+                        }
+                    });
+                }
+            </script>
+            <script>
+                function showRows() {
+                    var trs = document.getElementsByTagName("tr");
+                    for (tr of trs) {
+                        if (tr.style.display == "none") {
+                            tr.style.display = "";
+                            $.ajax({
+                                url: '/mycalendar/printing_plan/ready_orders',
+                                type: 'POST',
+                                data: {
+                                    'csrfmiddlewaretoken': '{{csrf_token}}',
+                                    'id': tr.cells[2].children[0].id.split('&')[1],
+                                    'attr': 'hidden',
+                                    'value': new Boolean(false)
+                                },
+                                dataType: 'json',
+                                success: function () {
+                                    alert('Done');
+                                }
+                            });
+                        };
+                    };
+                }
+            </script>
+            <script>
+                function deleteRow() {
+                    var tr = event.target.closest('tr');
+                    tr.style.display = 'none';
+                    $.ajax({
+                        url: '/mycalendar/printing_plan/ready_orders',
+                        type: 'POST',
+                        data: {
+                            'csrfmiddlewaretoken': '{{csrf_token}}',
+                            'id': tr.cells[2].children[0].id.split('&')[1],
+                            'delete': 'delete',
+                        },
+                        dataType: 'json',
+                        success: function () {
+                            alert('Done');
+                        }
+                    });
+                }
+            </script>
+        </form>
+{% endblock %}
