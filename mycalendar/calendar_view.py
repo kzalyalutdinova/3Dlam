@@ -897,14 +897,22 @@ class PrintingPlanView(View):
         print(request.user.is_superuser)
         self.context['printers'] = []
         # TODO: разобраться как создавать группы юзеров в Django
-        if request.user.is_superuser:
-            self.context['printers'] = Printer.objects.all()
+        if not request.user.is_superuser:
+            self.context['printers'] = ['Готовые заказы']
+            self.context['printers'].extend(Printer.objects.all())
         else:
-            for printer in Printer.objects.all():
-                if PrintingPlan.objects.filter(printer=printer, ready=False).exists():
-                    self.context['printers'].append(printer)
+            try:
+                ReadyOrder.objects.filter(ready=False)
+            except ObjectDoesNotExist:
+                pass
+            else:
+                self.context['printers'] = ['Готовые заказы']
+            finally:
+                for printer in Printer.objects.all():
+                    if PrintingPlan.objects.filter(printer=printer, ready=False).exists():
+                        self.context['printers'].append(printer)
         try:
-            self.context['current_printer'] = self.context['printers'][0]
+            self.context['current_printer'] = self.context['printers'][1]
         except IndexError:
             self.context['current_printer'] = Printer.objects.all()[0]
         self.context['items'] = []
