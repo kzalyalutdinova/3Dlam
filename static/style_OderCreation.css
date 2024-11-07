@@ -34,7 +34,7 @@ form#order_creation {
     border: solid;
     border-width: 1px;
     border-radius: 20px;
-    height: 760px;
+    height: 790px;
     border-color: rgba(7, 97, 125, 0.4);
 }
 
@@ -57,12 +57,12 @@ label.label {
     margin-left: 10px;
 }
 
-#ready_block {
+#ready_block, #regular_block {
     display: flex;
     align-self: flex-start;
 }
 
-#ready {
+#ready, #regular {
     margin-top: 0px;
     height: 17px;
     width: 17px;

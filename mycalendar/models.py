@@ -105,9 +105,10 @@ class Order(models.Model):
     cost = models.PositiveIntegerField(_('Order cost'))
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     ready = models.BooleanField(_('Is the order ready?'), default=False)
-    comment = models.CharField(_('Comment'), max_length=300)
+    comment = models.CharField(_('Comment'), max_length=300, blank=True)
     date = models.CharField(_('Date of the order'), max_length=30)
     duration = models.PositiveSmallIntegerField(_('Order completion time'), default=1)
+    regular = models.BooleanField(_('Is the order regular?'), default=False)
 
     def __str__(self):
         return f'{self.name}-{self.date}'
@@ -207,10 +208,3 @@ class ReadyOrder(models.Model):
     def __str__(self):
         return f'{self.order.name}-{self.order.date}'
 
-
-class RegularOrder(models.Model):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(_('The name of the order'), max_length=100)
-    comments = models.CharField(_('Comments on packing'), max_length=200, blank=True)
-    amount = models.PositiveSmallIntegerField(_('Amount of details'), default=1)
-    ready = models.BooleanField(_('Is it ready?'), default=False, blank=False)

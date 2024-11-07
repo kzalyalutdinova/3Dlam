@@ -573,6 +573,7 @@ class OrdersTableView(View):
         return render(request, self.template, self.context)
 
     def post(self, request):
+        #TODO: добавить переходы по месяцам
         print(request.POST)
         if 'new_order_button' in request.POST:
             return redirect('/mycalendar/new_order')
@@ -762,6 +763,7 @@ class NewOrderView(View):
         return render(request, self.template, self.context)
 
     def post(self, request):
+        # TODO: добавить шаблон постоянного заказа (все поля скопированы из заказа)
         try:
             today = Day.objects.get(date=request.POST['datepicker'])
         except ObjectDoesNotExist:
@@ -793,6 +795,10 @@ class NewOrderView(View):
 
             if 'ready' in request.POST:
                 order.ready = True
+                order.save()
+
+            if 'regular' in request.POST:
+                order.regular = True
                 order.save()
 
             for file in request.FILES.getlist('drawings'):
@@ -878,7 +884,7 @@ class PrintingPlanCreationView(View):
 
             for item in Order.objects.filter(material=Powder.objects.get(name=request.POST['powder'])):
                 pr = PrintingRegister.objects.get(order=item)
-                if (pr.month, pr.year) in dates:
+                if item.regular or ((pr.month, pr.year) in dates):
                     images = [str(img.file) for img in Drawing.objects.filter(order=item)]
                     order = {'name': item.name, 'images': images, 'customer': item.customer.name, 'id': item.id}
                     orders.append(order)
@@ -896,8 +902,8 @@ class PrintingPlanView(View):
         print(request.user)
         print(request.user.is_superuser)
         self.context['printers'] = []
-        # TODO: разобраться как создавать группы юзеров в Django
-        if not request.user.is_superuser:
+        #
+        if request.user.is_superuser:
             self.context['printers'] = ['Готовые заказы']
             self.context['printers'].extend(Printer.objects.all())
         else:
@@ -918,6 +924,8 @@ class PrintingPlanView(View):
         self.context['items'] = []
 
         if 'search_button' in request.GET:
+            if request.GET['printer'] == 'Готовые заказы':
+                return redirect(f'/mycalendar/printing_plan/ready_orders')
             sn = re.findall(r'\((.*?)\)', request.GET['printer'])[0]
             self.context['current_printer'] = Printer.objects.get(sn=sn)
 
@@ -997,7 +1005,7 @@ class ReadyOrdersView(View):
         print(request.POST)
         item = ReadyOrder.objects.get(id=int(request.POST['id']))
         if 'delete' in request.POST:
-            pass
+            item.delete()
         else:
             attr = request.POST['attr']
             if attr == 'amount':

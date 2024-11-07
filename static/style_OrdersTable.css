@@ -85,7 +85,7 @@ input[id^="cost&"], input[id^="date&"] {
 }
 
 input[type="number"].input {
-    width: 50px;
+    width: 100px;
 }
 
 select[id^="material"], select[id^="printer"] {
