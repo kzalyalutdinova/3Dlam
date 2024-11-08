@@ -172,26 +172,39 @@
                                             var color = `rgb(${r},${g},${b}, 0.6)`; // Collect all to a css color string
                                             return color;
                                         };
-
+                                        var months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
                                         var color = getRandomColor();
+                                        var search = document.getElementById("search").value;
+                                        if (search == "") {
+                                            var search_month = new Date().getMonth();
+                                            var search_year = new Date().getFullYear();
+                                        } else {
+                                            var search_month =  months.indexOf(search.split(" ")[0]);
+                                        };
+
+                                        var dates = document.querySelectorAll('[id^="date&"]');
+                                        var date = dates[dates.length - 1].value;
+                                        var start_day = parseInt(date.split('-')[2]);
+                                        var month = parseInt(date.split('-')[1]);
+                                        var year = parseInt(date.split('-')[0]);
+
+                                        var durations = document.querySelectorAll('[id^="duration&"]');
+                                        var duration = parseInt(durations[durations.length - 1].value) - 1;
+
+                                        if (search_month != month - 1) {
+                                            var last_day = new Date(year, month, 0).getDate();
+                                            duration = duration - (last_day - start_day + 1);
+                                            start_day = 1;
+                                        };
+                                        var printers = document.querySelectorAll('[id^="printer&"]');
+                                        var printer = printers[printers.length - 1].value;
+                                        var printer_elems = document.querySelectorAll('[id="ready_cell"]');
+                                        var printer_elem = printer_elems[printer_elems.length - 1];
+
                                         for (const day in {{days}}) {
-
-                                            var printers = document.querySelectorAll('[id^="printer&"]');
-                                            var printer = printers[printers.length - 1].value;
-                                            var printer_elems = document.querySelectorAll('[id="ready_cell"]');
-                                            var printer_elem = printer_elems[printer_elems.length - 1];
-
                                             var cur_day = parseInt(day) + 1;
-
-                                            var dates = document.querySelectorAll('[id^="date&"]');
-                                            var date = dates[dates.length - 1].value;
-                                            var start_day = parseInt(date.split('-')[2])
-
-                                            var durations = document.querySelectorAll('[id^="duration&"]');
-                                            var duration = parseInt(durations[durations.length - 1].value) - 1;
-
-
                                             if ((cur_day <= start_day + duration) && (cur_day >= start_day)) {
+
                                                 var element = document.createElement("td");
                                                 element.width = 30;
 
@@ -249,16 +262,32 @@
         </form>
         <script>
             $("[id^=date], [id^=duration]").change(function changeDates() {
+                var months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
                 var parent_tr = this.closest('tr').cells;
+                var search = document.getElementById("search").value;
+                if (search == "") {
+                    var search_month = new Date().getMonth();
+                } else {
+                    var search_month =  months.indexOf(search.split(" ")[0]);
+                };
                 var start_date = parent_tr[7].firstElementChild.value;
+                var start_day = parseInt(start_date.split('-')[2]);
                 var duration = parseInt(parent_tr[8].firstElementChild.value);
+                var month = parseInt(start_date.split('-')[1]);
+                var year = parseInt(date.split('-')[0]);
                 var printer = parent_tr[9].firstElementChild.value;
                 var cur_day = 1;
                 var color = getRandomColor();
-                var white = 'rgb(255, 255, 255)'
+                var white = 'rgb(255, 255, 255)';
+
+                if (search_month != month - 1) {
+                    var last_day = new Date(year, month, 0).getDate();
+                    duration = duration - (last_day - start_day + 1);
+                    start_day = 1;
+                };
 
                 for (let i = 11; i < parent_tr.length; i++) {
-                    if ((cur_day < parseInt(start_date.split('-')[2]) + duration) && (cur_day >= parseInt(start_date.split('-')[2]))) {
+                    if ((cur_day < start_day + duration) && (cur_day >= start_day)) {
                         parent_tr[i].className = "days_true";
                         parent_tr[i].style.background = color;
                         parent_tr[i].innerHTML = printer;

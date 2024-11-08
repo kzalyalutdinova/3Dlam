@@ -528,7 +528,15 @@ class OrdersTableView(View):
     def get(self, request):
         self.context['powders'] = Powder.objects.all()
         self.context['printers'] = Printer.objects.all()
-        register = PrintingRegister.objects.filter(month=sc.months_list[self.today.month - 1], year=self.today.year)
+        register = [obj for obj in PrintingRegister.objects.filter(month=sc.months_list[self.today.month - 1],
+                                                                   year=self.today.year)]
+        if self.today.month - 2 < 0:
+            year = self.today.year - 1
+        else:
+            year = self.today.year
+        register.extend(PrintingRegister.objects.filter(next_month=True,
+                                                        year=year,
+                                                        month=sc.months_list[self.today.month - 2]))
 
         try:
             today = Day.objects.get(date=self.today)
@@ -573,7 +581,6 @@ class OrdersTableView(View):
         return render(request, self.template, self.context)
 
     def post(self, request):
-        #TODO: добавить переходы по месяцам
         print(request.POST)
         if 'new_order_button' in request.POST:
             return redirect('/mycalendar/new_order')
@@ -587,8 +594,14 @@ class OrdersTableView(View):
         if 'new_material' in request.POST:
             return redirect('/mycalendar/printing_register/new_material')
 
-        pr_register = PrintingRegister.objects.filter(month=sc.months_list[self.today.month - 1],
-                                                      year=self.today.year)
+        pr_register = [obj for obj in PrintingRegister.objects.filter(month=sc.months_list[self.today.month - 1],
+                                                                      year=self.today.year)]
+        if self.today.month - 2 < 0:
+            year = self.today.year - 1
+        else:
+            year = self.today.year
+        pr_register.extend(PrintingRegister.objects.filter(next_month=True, year=year,
+                                                           month=sc.months_list[self.today.month - 2]))
 
         if 'printer' in request.POST:
             order_id = request.POST['id'].split('&')[1]
@@ -605,8 +618,16 @@ class OrdersTableView(View):
 
         if 'search' in request.POST and request.POST['search'].strip():
             cur_month = request.POST['search'].split(' ')[0]
-            year = request.POST['search'].split(' ')[1]
-            pr_register = PrintingRegister.objects.filter(month=cur_month, year=year)
+            i = sc.months_list.index(cur_month)
+            if i - 1 < 0:
+                year = int(request.POST['search'].split(' ')[1]) - 1
+            else:
+                year = request.POST['search'].split(' ')[1]
+            pr_register = [obj for obj in PrintingRegister.objects.filter(month=cur_month, year=year)]
+            pr_register.extend(PrintingRegister.objects.filter(month=sc.months_list[i-1],
+                                                              year=year,
+                                                              next_month=True))
+
         else:
             year = self.today.year
             sc.leap_year_check(year)
@@ -764,10 +785,6 @@ class NewOrderView(View):
 
     def post(self, request):
         # TODO: добавить шаблон постоянного заказа (все поля скопированы из заказа)
-        try:
-            today = Day.objects.get(date=request.POST['datepicker'])
-        except ObjectDoesNotExist:
-            pass
 
         if request.POST['order_name'].strip() and request.POST['customer'].strip():
             try:
@@ -787,7 +804,15 @@ class NewOrderView(View):
             try:
                 register = PrintingRegister.objects.get(order=order)
             except ObjectDoesNotExist:
+                date = datetime.datetime.strptime(request.POST['datepicker'], '%Y-%m-%d').date()
+                end_date = date + datetime.timedelta(days=int(request.POST['duration']))
+                if end_date.month != date.month:
+                    next_month = True
+                else:
+                    next_month = False
+
                 register = PrintingRegister.objects.create(order=order,
+                                                           next_month=next_month,
                                                            month=sc.months_list[int(
                                                                request.POST['datepicker'].split('-')[1]) - 1],
                                                            year=int(request.POST['datepicker'].split('-')[0])

@@ -132,6 +132,7 @@ class Printer(models.Model):
 class PrintingRegister(models.Model):
     month = models.CharField(_('Month'), max_length=20, default=0)
     year = models.PositiveSmallIntegerField(_('Year'), default=2024)
+    next_month = models.BooleanField(_('Will the order be completed next month?'), default=False)
     order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
     printer = models.ForeignKey(Printer, on_delete=models.SET_NULL, null=True)
 
