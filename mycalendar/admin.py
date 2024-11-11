@@ -25,4 +25,5 @@ admin.site.register(PrintingPlan)
 admin.site.register(PPDrawing)
 admin.site.register(PPStandardOperations)
 admin.site.register(ReadyOrder)
+admin.site.register(RegularOrdersPattern)
 

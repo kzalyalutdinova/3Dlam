@@ -519,6 +519,7 @@ def parse_month(date: str):
 
 
 class OrdersTableView(View):
+    #TODO: добавить возможность удаления
     template = 'pr_OrdersTable.html'
     today = datetime.date.today()
 
@@ -781,6 +782,17 @@ class NewOrderView(View):
     context = {'today': today, 'materials': Powder.objects.all(), 'customers': Customer.objects.all()}
 
     def get(self, request):
+        regular_orders = []
+        for item in RegularOrdersPattern.objects.all():
+            try:
+                images = json.loads(item.drawings)['images']
+            except TypeError:
+                images = None
+            regular_orders.append({'item': item,
+                                   'images': images
+                                   })
+            print(regular_orders)
+        self.context['regular_orders'] = regular_orders
         return render(request, self.template, self.context)
 
     def post(self, request):
@@ -818,6 +830,11 @@ class NewOrderView(View):
                                                            year=int(request.POST['datepicker'].split('-')[0])
                                                            )
 
+            drawings = []
+            for file in request.FILES.getlist('drawings'):
+                drawing = Drawing.objects.create(file=file, order=order)
+                drawings.append(drawing)
+
             if 'ready' in request.POST:
                 order.ready = True
                 order.save()
@@ -825,9 +842,26 @@ class NewOrderView(View):
             if 'regular' in request.POST:
                 order.regular = True
                 order.save()
-
-            for file in request.FILES.getlist('drawings'):
-                Drawing.objects.create(file=file, order=order)
+                try:
+                    regular_order = RegularOrdersPattern.objects.get(
+                        name=request.POST['order_name'],
+                        customer=customer,
+                        material=Powder.objects.get(name=request.POST['material']),
+                        volume=request.POST['volume'])
+                except ObjectDoesNotExist:
+                    regular_order = RegularOrdersPattern.objects.create(
+                        name=request.POST['order_name'],
+                        customer=customer,
+                        amount=request.POST['amount'],
+                        material=Powder.objects.get(name=request.POST['material']),
+                        volume=request.POST['volume'],
+                        cost=request.POST['cost'],
+                        comment=request.POST['comment'],
+                        date=request.POST['datepicker'],
+                        duration=request.POST['duration'],
+                        drawings=json.dumps({'images': [str(img.file) for img in drawings]},
+                                            ensure_ascii=False)
+                    )
 
         return render(request, self.template, self.context)
 

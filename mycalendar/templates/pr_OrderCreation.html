@@ -39,66 +39,101 @@
         </form>
             <form enctype="multipart/form-data" action="" class="printing_register" method="post" id="order_creation">
                 {% csrf_token %}
-
                 <h2 class="title" id="new_order">Новый заказ</h2>
-                <div class="block" id="order-name-block">
-                    <label for="order_name" class="label">Наименование</label>
-                    <input type="text" class="input" id="order_name" name="order_name" required maxlength="200"/>
-                </div>
-                <div class="block" id="customer-block">
-                    <label for="customer" class="label">Заказчик</label>
-                    <input type="text" class="input" id="customer" name="customer" required maxlength="200"/>
-                </div>
-                <div class="block" id="amount-block">
-                    <label for="amount" class="label">Количество</label>
-                    <input type="number" class="input" id="amount" name="amount" required min="1"/>
-                </div>
-                <div class="block" id="material-block">
-                    <label for="material" class="label">Материал</label>
-                    <select name="material" id="material" required>
-                        <option value="" disabled selected hidden>--Выберите материал--</option>
-                        {% for material in materials %}
-                            <option value="{{material.name}}">{{material.name}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="block" id="volume-block">
-                    <label for="volume" class="label">Объем</label>
-                    <input type="number" class="input" id="volume" name="volume" required min="0" step="0.01"/>
-                </div>
-                <div class="block" id="cost-block">
-                    <label for="cost" class="label">Стоимость</label>
-                    <input type="number" class="input" id="cost" name="cost" required min="0"/>
-                </div>
-                <div class="block" id="monthyear-block">
-                    <label for="datepicker" class="label">Дата заказа</label>
-                    <input type="text" class="input" id="datepicker" name="datepicker" required readonly />
-                </div>
-                <div class="block" id="duration-block">
-                    <label for="duration" class="label">Длительность, дн.</label>
-                    <input type="number" class="input" id="duration" name="duration" value="1" required />
-                </div>
-                <div class="block" id="comment_block">
-                    <label for="comment" class="label">Комментарии к заказу</label>
-                    <input type="text" class="input" id="comment" name="comment" maxlength="300" />
-                </div>
-                <div class="block" id="ready_block">
-                    <input type="checkbox" id="ready" name="ready" value="True"/>
-                    <label for="ready" class="label" id="ready_label">Заказ готов</label>
-                </div>
-                <div class="block" id="regular_block">
-                    <input type="checkbox" id="regular" name="regular" value="True"/>
-                    <label for="ready" class="label" id="regular_label">Постоянный заказ</label>
-                </div>
-                <div class="block" id="upload_files">
-                    <input name="drawings" type="file" id="drawings" accept="image/png, image/jpeg" multiple />
+                <div class="block" id="main_n_regular">
+                    <div class="block" id="regular_orders">
+                        <label for="block_orders" class="label">Шаблоны постоянных заказов</label>
+                        <div class="block" id="block_orders">
+                            {% for order in regular_orders %}
+                            <div id="orders">
+                                <div id="check">
+                                    <input type="checkbox"/>
+                                </div>
+                                <div id="images_n_names">
+                                    <div id="re_name">{{order.item.name}}</div>
+                                    <div id="re_customer">{{order.item.customer}}</div>
+                                    <div id="images">
+                                        {% for img in order.images %}
+                                        <img style="width:100px; height: 100px;" src="../static/media/{{img}}"/>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="block" id="order_creation_main">
+
+                        <div class="block" id="order-name-block">
+                            <label for="order_name" class="label">Наименование</label>
+                            <input type="text" class="input" id="order_name" name="order_name" required maxlength="200"/>
+                        </div>
+                        <div class="block" id="customer-block">
+                            <label for="customer" class="label">Заказчик</label>
+                            <input type="text" class="input" id="customer" name="customer" required maxlength="200"/>
+                        </div>
+                        <div class="block" id="amount-block">
+                            <label for="amount" class="label">Количество</label>
+                            <input type="number" class="input" id="amount" name="amount" required min="1"/>
+                        </div>
+                        <div class="block" id="material-block">
+                            <label for="material" class="label">Материал</label>
+                            <select name="material" id="material" required>
+                                <option value="" disabled selected hidden>--Выберите материал--</option>
+                                {% for material in materials %}
+                                    <option value="{{material.name}}">{{material.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="block" id="volume-block">
+                            <label for="volume" class="label">Объем</label>
+                            <input type="number" class="input" id="volume" name="volume" required min="0" step="0.01"/>
+                        </div>
+                        <div class="block" id="cost-block">
+                            <label for="cost" class="label">Стоимость</label>
+                            <input type="number" class="input" id="cost" name="cost" required min="0"/>
+                        </div>
+                        <div class="block" id="monthyear-block">
+                            <label for="datepicker" class="label">Дата заказа</label>
+                            <input type="text" class="input" id="datepicker" name="datepicker" required readonly />
+                        </div>
+                        <div class="block" id="duration-block">
+                            <label for="duration" class="label">Длительность, дн.</label>
+                            <input type="number" class="input" id="duration" name="duration" value="1" required />
+                        </div>
+                        <div class="block" id="comment_block">
+                            <label for="comment" class="label">Комментарии к заказу</label>
+                            <input type="text" class="input" id="comment" name="comment" maxlength="300" />
+                        </div>
+                        <div class="block" id="ready_block">
+                            <input type="checkbox" id="ready" name="ready" value="True"/>
+                            <label for="ready" class="label" id="ready_label">Заказ готов</label>
+                        </div>
+                        <div class="block" id="regular_block">
+                            <input type="checkbox" id="regular" name="regular" value="True"/>
+                            <label for="ready" class="label" id="regular_label">Постоянный заказ</label>
+                        </div>
+                        <div class="block" id="upload_files">
+                            <input name="drawings" type="file" id="drawings" accept="image/png, image/jpeg" multiple />
+                        </div>
+                        <div class="block" id="submit-block">
+                            <input type="submit" class="button" id="submit_button" name="submit_button" value="Сохранить"/>
+                        </div>
+                    </div>
                 </div>
 
-
-                <div class="block" id="submit-block">
-                    <input type="submit" class="button" id="submit_button" name="submit_button" value="Сохранить"/>
-                </div>
-
+                <script>
+                    $(function() {
+                        var availableTags = [
+                            {% for customer in customers %}
+                                "{{customer.name}}",
+                            {% endfor %}
+                        ];
+                        $("#customer").autocomplete({
+                            source: availableTags
+                        });
+                    });
+                </script>
                 <script>
                     $(function() {
                         var availableTags = [

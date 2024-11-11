@@ -174,7 +174,6 @@ class PPDrawing(models.Model):
     pp = models.ForeignKey(PrintingPlan, on_delete=models.SET_NULL, null=True)
     file = models.ImageField(_('Drawing for printing plan'), upload_to=f"printing_plan/", max_length=1000)
 
-
     def __str__(self):
         return f'{self.pp}'
 
@@ -209,3 +208,25 @@ class ReadyOrder(models.Model):
     def __str__(self):
         return f'{self.order.name}-{self.order.date}'
 
+
+class RegularOrdersPattern(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(_('The name of the order'), max_length=200)
+    amount = models.PositiveSmallIntegerField(_('Amount of details to produce'), default=1)
+    material = models.ForeignKey(Powder, on_delete=models.SET_NULL, null=True)
+    volume = models.DecimalField(_('Volume of the model2'), max_digits=5, decimal_places=2, default=0)
+    cost = models.PositiveIntegerField(_('Order cost'))
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    ready = models.BooleanField(_('Is the order ready?'), default=False)
+    comment = models.CharField(_('Comment'), max_length=300, blank=True)
+    date = models.CharField(_('Date of the order'), max_length=30)
+    duration = models.PositiveSmallIntegerField(_('Order completion time'), default=1)
+    regular = models.BooleanField(_('Is the order regular?'), default=True)
+    drawings = models.JSONField(_('Drawings Paths'), blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.name}-{self.date}'
+
+    class Meta:
+        verbose_name = "Regular Orders Pattern"
+        verbose_name_plural = "Regular Orders Patterns"

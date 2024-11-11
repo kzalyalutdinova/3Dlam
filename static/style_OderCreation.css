@@ -25,12 +25,9 @@ div#main_content {
 }
 
 form#order_creation {
-    display: grid;
-    grid-template-rows: 60px 60px 60px 60px 60px 60px 60px 60px 60px 100px 40px 40px;
-    align-items: start;
-    justify-content: center;
-    align-content: start;
-    width: 300px;
+    display: flex;
+    flex-direction: column;
+    width: 650px;
     border: solid;
     border-width: 1px;
     border-radius: 20px;
@@ -38,9 +35,24 @@ form#order_creation {
     border-color: rgba(7, 97, 125, 0.4);
 }
 
+#main_n_regular {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+#order_creation_main {
+    display: grid;
+    width: 300px;
+    grid-template-rows: 60px 60px 60px 60px 60px 60px 60px 60px 100px 40px 40px 40px;
+    align-items: start;
+    justify-content: center;
+    align-content: start;
+}
+
 h2.title {
-    padding-left: 10px;
-    padding-right: 10px;
+    text-align: center;
 
 }
 
@@ -52,6 +64,7 @@ label.label {
     background-color: white;
     text-shadow: 0 0px 0 rgba(0, 0, 0, 0.25);
 }
+
 #ready_label {
     margin-bottom: 0px;
     margin-left: 10px;
@@ -73,7 +86,8 @@ label.label {
 
 div.block {
     display: grid;
-    width: 200px;
+    width: 250px;
+    align-items: start;
 }
 
 #comment_block {
@@ -86,6 +100,7 @@ div.block {
 #material,
 #cost,
 #datepicker,
+#duration,
 #comment,
 #volume {
     border: solid;
@@ -93,10 +108,17 @@ div.block {
     border-radius: 10px;
     color: #2e383f;
     background-color: white;
+    width: 220px;
+    margin-bottom: 0px;
+    height: 25px;
+}
+
+#material {
+    height: 30px;
 }
 
 #comment {
-    height: 150%;
+    height: 250%;
 }
 
 #submit-block {
@@ -125,5 +147,20 @@ div.buttons {
 #back {
     width: 100px;
     margin-bottom: 10px;
+}
+
+#block_orders {
+    justify-items: start;
+    overflow-y: auto;
+}
+#orders {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+}
+
+#check {
+    padding-right: 10px;
 }
 
