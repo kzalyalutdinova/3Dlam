@@ -205,8 +205,7 @@ class ReadyOrder(models.Model):
         verbose_name = "Ready order"
         verbose_name_plural = "Ready orders"
 
-    def __str__(self):
-        return f'{self.order.name}-{self.order.date}'
+
 
 
 class RegularOrdersPattern(models.Model):

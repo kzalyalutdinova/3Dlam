@@ -782,7 +782,15 @@ class NewOrderView(View):
     context = {'today': today, 'materials': Powder.objects.all(), 'customers': Customer.objects.all()}
 
     def get(self, request):
+        print()
         regular_orders = []
+        if 'pattern' in request.GET:
+            item = RegularOrdersPattern.objects.get(id=int(request.GET['pattern']))
+            result = {'order_name': item.name, 'customer': item.customer.name, 'amount': item.amount,
+                      'material': item.material.name, 'volume': item.volume, 'cost': item.cost,
+                      'datepicker': item.date, 'duration': item.duration, 'comment': item.comment}
+
+            return JsonResponse(result)
         for item in RegularOrdersPattern.objects.all():
             try:
                 images = json.loads(item.drawings)['images']
@@ -797,7 +805,7 @@ class NewOrderView(View):
 
     def post(self, request):
         # TODO: добавить шаблон постоянного заказа (все поля скопированы из заказа)
-
+        print(request.POST)
         if request.POST['order_name'].strip() and request.POST['customer'].strip():
             try:
                 customer = Customer.objects.get(name=request.POST['customer'])
@@ -862,7 +870,13 @@ class NewOrderView(View):
                         drawings=json.dumps({'images': [str(img.file) for img in drawings]},
                                             ensure_ascii=False)
                     )
-
+                else:
+                    if not drawings:
+                        images = json.loads(regular_order.drawings)
+                        for image in images['images']:
+                            Drawing.objects.create(file=image, order=order)
+        if 'submit_button' in request.POST:
+            return redirect('/mycalendar/printing_register')
         return render(request, self.template, self.context)
 
 

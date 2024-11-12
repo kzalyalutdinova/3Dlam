@@ -43,27 +43,25 @@
                 <div class="block" id="main_n_regular">
                     <div class="block" id="regular_orders">
                         <label for="block_orders" class="label">Шаблоны постоянных заказов</label>
+
                         <div class="block" id="block_orders">
                             {% for order in regular_orders %}
-                            <div id="orders">
-                                <div id="check">
-                                    <input type="checkbox"/>
-                                </div>
-                                <div id="images_n_names">
-                                    <div id="re_name">{{order.item.name}}</div>
-                                    <div id="re_customer">{{order.item.customer}}</div>
-                                    <div id="images">
-                                        {% for img in order.images %}
-                                        <img style="width:100px; height: 100px;" src="../static/media/{{img}}"/>
-                                        {% endfor %}
+                                <div id="orders">
+                                    <input class="patterns" type="radio" value="{{order.item.id}}" name="pattern"/>
+                                    <div id="images_n_names">
+                                        <div id="re_name">{{order.item.name}}</div>
+                                        <div id="re_customer">{{order.item.customer}}</div>
+                                        <div id="images">
+                                            {% for img in order.images %}
+                                            <img style="width:100px; height: 100px;" src="../static/media/{{img}}"/>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
                             {% endfor %}
                         </div>
                     </div>
                     <div class="block" id="order_creation_main">
-
                         <div class="block" id="order-name-block">
                             <label for="order_name" class="label">Наименование</label>
                             <input type="text" class="input" id="order_name" name="order_name" required maxlength="200"/>
@@ -135,16 +133,25 @@
                     });
                 </script>
                 <script>
-                    $(function() {
-                        var availableTags = [
-                            {% for customer in customers %}
-                                "{{customer.name}}",
-                            {% endfor %}
-                        ];
-                        $("#customer").autocomplete({
-                            source: availableTags
+                    $('.patterns').change(function() {
+                        var id = this.value;
+                        $.ajax({
+                            url: '/mycalendar/new_order',
+                            type: 'GET',
+                            data: {
+                                'pattern': id
+                            },
+                            dataType: 'json',
+                            success: function (data) {
+                                const keys = Object.keys(data);
+                                for (key of keys) {
+                                    var elem = document.getElementById(key);
+                                    elem.value = data[key];
+                                };
+                                document.getElementById('regular').checked = 'True'
+                            }
                         });
-                    });
+                    })
                 </script>
             </form>
     </div>
