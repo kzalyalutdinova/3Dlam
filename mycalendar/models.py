@@ -205,9 +205,6 @@ class ReadyOrder(models.Model):
         verbose_name = "Ready order"
         verbose_name_plural = "Ready orders"
 
-
-
-
 class RegularOrdersPattern(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(_('The name of the order'), max_length=200)

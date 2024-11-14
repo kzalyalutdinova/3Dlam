@@ -15,10 +15,9 @@ from django.http import JsonResponse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.timezone import make_aware
 
-"""
+
 def is_master(user):
     return user.groups.filter(name='Masters').exists()
-"""
 
 """All views in one place"""
 class CreateSchedule(View):
@@ -980,7 +979,7 @@ class PrintingPlanView(View):
         print(request.user.is_superuser)
         self.context['printers'] = []
         #
-        if request.user.is_superuser:
+        if is_master(request.user):
             self.context['printers'] = ['Готовые заказы']
             self.context['printers'].extend(Printer.objects.all())
         else:
@@ -1026,7 +1025,7 @@ class PrintingPlanView(View):
         print(request.POST)
         if 'id' in request.POST:
             item = PrintingPlan.objects.get(id=int(request.POST['id']))
-            if 'ready' not in request.POST and 'delete' not in request.POST:
+            if 'ready' not in request.POST and 'delete' not in request.POST and is_master(request.user):
                 attr = request.POST['attr']
                 if attr == 'file_num':
                     value = int(request.POST['value'])
@@ -1040,6 +1039,8 @@ class PrintingPlanView(View):
                     value = json.loads(request.POST['value'])
                 setattr(item, attr, value)
                 item.save()
+                return JsonResponse({'success': True})
+
             elif 'ready' in request.POST:
                 if request.POST['ready'] == 'True':
                     item.ready = True
@@ -1052,13 +1053,17 @@ class PrintingPlanView(View):
                     item.ready = False
                     item.datetime_end = None
                 item.save()
-            else:
+                return JsonResponse({'success': True})
+
+            elif 'delete' in request.POST and is_master(request.user):
                 item.delete()
-        elif 'new_pp' in request.POST:
+                return JsonResponse({'success': True})
+
+        elif 'new_pp' in request.POST and is_master(request.user):
             return redirect(f'/mycalendar/printing_plan/new_print')
-        elif 'new_material' in request.POST:
+        elif 'new_material' in request.POST and is_master(request.user):
             return redirect('/mycalendar/printing_register/new_material')
-        elif 'new_printer' in request.POST:
+        elif 'new_printer' in request.POST and is_master(request.user):
             return redirect('/mycalendar/printing_register/new_printer')
 
         return render(request, self.template, self.context)
@@ -1082,8 +1087,11 @@ class ReadyOrdersView(View):
         print(request.POST)
         item = ReadyOrder.objects.get(id=int(request.POST['id']))
         if 'delete' in request.POST:
-            item.delete()
+            if is_master(request.user):
+                item.delete()
+                return JsonResponse({'success': True})
         else:
+            # TODO: доделать верификацию
             attr = request.POST['attr']
             if attr == 'amount':
                 value = int(request.POST['value'])
