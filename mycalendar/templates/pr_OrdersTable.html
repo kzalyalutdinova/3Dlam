@@ -58,7 +58,7 @@
             {% csrf_token %}
             <div class="block" id="search_n_neworder">
                 <div class="block" id="search_block">
-                    <input type="text" class="search" id="search" name="search" placeholder="Выберите месяц и год" readonly />
+                    <input type="text" class="search" id="search" name="search" value="{{month_year}}" placeholder="Выберите месяц и год" readonly />
                     <input type="submit" class="button" id="search_button" name="search_button" value="Найти"/>
                 </div>
 

@@ -163,5 +163,8 @@ div.buttons {
     flex-wrap: wrap;
 }
 
+#orders {
+    overflow-y: auto;
+}
 
 

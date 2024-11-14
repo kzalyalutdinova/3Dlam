@@ -522,11 +522,13 @@ class OrdersTableView(View):
     #TODO: добавить возможность удаления
     template = 'pr_OrdersTable.html'
     today = datetime.date.today()
-
     context = {'today': today, 'printers': Printer.objects.all(),
                'powders': Powder.objects.all(), 'customers': Customer.objects.all()}
 
     def get(self, request):
+        year, month, _ = parse_month(str(self.today))
+        self.context['month_year'] = f'{month} {year}'
+        print(self.context['month_year'])
         self.context['powders'] = Powder.objects.all()
         self.context['printers'] = Printer.objects.all()
         register = [obj for obj in PrintingRegister.objects.filter(month=sc.months_list[self.today.month - 1],
@@ -618,6 +620,8 @@ class OrdersTableView(View):
             return JsonResponse(response)
 
         if 'search' in request.POST and request.POST['search'].strip():
+            self.context['today'] = request.POST['search']
+            self.context['month_year'] = request.POST['search']
             cur_month = request.POST['search'].split(' ')[0]
             i = sc.months_list.index(cur_month)
             if i - 1 < 0:
@@ -805,7 +809,7 @@ class NewOrderView(View):
 
     def post(self, request):
         # TODO: добавить шаблон постоянного заказа (все поля скопированы из заказа)
-        print(request.POST)
+
         if request.POST['order_name'].strip() and request.POST['customer'].strip():
             try:
                 customer = Customer.objects.get(name=request.POST['customer'])
