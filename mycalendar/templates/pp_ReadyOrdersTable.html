@@ -98,8 +98,9 @@
                             'value': value
                         },
                         dataType: 'json',
-                        success: function () {
-                            alert('Done');
+                        success: function () {},
+                        error: function () {
+                            alert('У вас нет разрешения на это изменение');
                         }
                     });
                 })
@@ -107,7 +108,6 @@
             <script>
                 function hideRow() {
                     var tr = event.target.closest('tr');
-                    tr.style.display = 'none';
                     $.ajax({
                         url: '/mycalendar/printing_plan/ready_orders',
                         type: 'POST',
@@ -119,7 +119,10 @@
                         },
                         dataType: 'json',
                         success: function () {
-                            alert('Done');
+                            tr.style.display = 'none';
+                        },
+                        error: function () {
+                            alert('У вас нет разрешения на это изменение');
                         }
                     });
                 }
@@ -129,7 +132,6 @@
                     var trs = document.getElementsByTagName("tr");
                     for (tr of trs) {
                         if (tr.style.display == "none") {
-                            tr.style.display = "";
                             $.ajax({
                                 url: '/mycalendar/printing_plan/ready_orders',
                                 type: 'POST',
@@ -141,7 +143,14 @@
                                 },
                                 dataType: 'json',
                                 success: function () {
-                                    alert('Done');
+                                    for (tr of trs) {
+                                        if (tr.style.display == "none") {
+                                            tr.style.display = "";
+                                        };
+                                    };
+                                },
+                                error: function () {
+                                    alert('У вас нет разрешения на это изменение');
                                 }
                             });
                         };
@@ -151,7 +160,6 @@
             <script>
                 function deleteRow() {
                     var tr = event.target.closest('tr');
-                    tr.style.display = 'none';
                     $.ajax({
                         url: '/mycalendar/printing_plan/ready_orders',
                         type: 'POST',
@@ -162,7 +170,10 @@
                         },
                         dataType: 'json',
                         success: function () {
-                            alert('Done');
+                            tr.style.display = 'none';
+                        },
+                        error: function () {
+                            alert('У вас нет разрешения на это изменение');
                         }
                     });
                 }

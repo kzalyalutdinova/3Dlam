@@ -767,6 +767,7 @@ class NewMaterialView(View):
         return render(request, self.template)
 
     def post(self, request):
+        print(request.POST)
         if request.POST['material_name'].strip():
             try:
                 powder = Powder.objects.get(name=request.POST['material_name'])
@@ -776,6 +777,7 @@ class NewMaterialView(View):
                 powder = Powder.objects.create(name=request.POST['material_name'],
                                                density=float(request.POST['density']))
 
+            return redirect(request.path[0:request.path.rfind('/')])
         return render(request, self.template)
 
 
@@ -900,6 +902,9 @@ class NewPrinterView(View):
         if request.POST['model_name'].strip():
             model = PrinterModels.objects.get(name=request.POST['model_name'])
             Printer.objects.create(model=model)
+            # print(request.site)
+            # print(request.site[0:request.path.rfind('/')])
+            # return redirect(request.path[0:request.path.rfind('/')])
 
         return render(request, self.template, self.context)
 
@@ -974,11 +979,8 @@ class PrintingPlanView(View):
     context = {'items': [], 'current_printer': None, 'printers': []}
 
     def get(self, request):
-        print(request.GET)
-        print(request.user)
-        print(request.user.is_superuser)
         self.context['printers'] = []
-        #
+
         if is_master(request.user):
             self.context['printers'] = ['Готовые заказы']
             self.context['printers'].extend(Printer.objects.all())
@@ -1022,7 +1024,6 @@ class PrintingPlanView(View):
         return render(request, self.template, self.context)
 
     def post(self, request):
-        print(request.POST)
         if 'id' in request.POST:
             item = PrintingPlan.objects.get(id=int(request.POST['id']))
             if 'ready' not in request.POST and 'delete' not in request.POST and is_master(request.user):
@@ -1091,7 +1092,6 @@ class ReadyOrdersView(View):
                 item.delete()
                 return JsonResponse({'success': True})
         else:
-            # TODO: доделать верификацию
             attr = request.POST['attr']
             if attr == 'amount':
                 value = int(request.POST['value'])
@@ -1106,7 +1106,9 @@ class ReadyOrdersView(View):
                     value = True
                 else:
                     value = False
-            setattr(item, attr, value)
-            item.save()
+            if is_master(request.user) or attr == 'ready':
+                setattr(item, attr, value)
+                item.save()
+                return JsonResponse({'success': True})
 
         return render(request, self.template, self.context)

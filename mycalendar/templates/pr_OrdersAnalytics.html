@@ -49,7 +49,7 @@
         <form action="" class="printing_register" method="post">
             {% csrf_token %}
             <div class="block" id="back_block">
-                <input type="button" class="button" id="back" name="back" value="Назад" onclick="history.back()"/>
+                <input type="button" class="button" id="back" name="back" value="Назад" onclick="window.location = '/mycalendar/printing_register';"/>
             </div>
             <div class="block" id="filter-block">
                 {% csrf_token %}
