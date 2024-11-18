@@ -17,13 +17,13 @@
         <form enctype="multipart/form-data" action="" class="back_form" method="post" id="back_form">
             <div class="block" id="back_block">
                 {% csrf_token %}
-                <input type="button" class="button" id="back" name="back" value="Назад" onclick="history.back()"/>
+                <input type="button" class="button" id="back" name="back" value="Назад" onclick="history.go(-1)"/>
             </div>
         </form>
-            <form enctype="multipart/form-data" action="" class="printing_register" method="post" id="material_creation">
+            <form enctype="multipart/form-data" action="" class="printing_register" method="post" id="material_creation" onsubmit="history.go(-1)">
                 {% csrf_token %}
-
                 <h2 class="title" id="new_material">Новый материал</h2>
+                <input type="hidden" class="input" id="before" name="before">
                 <div class="block" id="order-name-block">
                     <label for="material_name" class="label">Наименование</label>
                     <input type="text" class="input" id="material_name" name="material_name" required maxlength="200"/>
@@ -36,5 +36,9 @@
                         <input type="submit" class="button" id="submit_button" name="submit_button" value="Сохранить" />
                     </div>
             </form>
+        <script>
+            var before = document.getElementById("before");
+            before.value = document.referrer;
+        </script>
     </div>
 {% endblock %}

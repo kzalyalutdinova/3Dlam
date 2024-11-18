@@ -777,7 +777,8 @@ class NewMaterialView(View):
                 powder = Powder.objects.create(name=request.POST['material_name'],
                                                density=float(request.POST['density']))
 
-            return redirect(request.path[0:request.path.rfind('/')])
+            if 'before' in request.POST and request.POST['before'].strip():
+                return redirect(request.POST['before'])
         return render(request, self.template)
 
 
@@ -902,9 +903,9 @@ class NewPrinterView(View):
         if request.POST['model_name'].strip():
             model = PrinterModels.objects.get(name=request.POST['model_name'])
             Printer.objects.create(model=model)
-            # print(request.site)
-            # print(request.site[0:request.path.rfind('/')])
-            # return redirect(request.path[0:request.path.rfind('/')])
+
+            if 'before' in request.POST and request.POST['before'].strip():
+                return redirect(request.POST['before'])
 
         return render(request, self.template, self.context)
 
@@ -976,7 +977,7 @@ class PrintingPlanCreationView(View):
 
 class PrintingPlanView(View):
     template = 'pp_PrintingPlanTable.html'
-    context = {'items': [], 'current_printer': None, 'printers': []}
+    context = {'items': [], 'current_printer': None, 'printers': [], 'before': '/mycalendar/printing_plan' }
 
     def get(self, request):
         self.context['printers'] = []

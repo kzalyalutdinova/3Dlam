@@ -24,6 +24,7 @@
                 {% csrf_token %}
 
                 <h2 class="title" id="new_material">Новый принтер</h2>
+                <input type="hidden" class="input" id="before" name="before">
                 <div class="block" id="order-name-block">
                     <label for="model_name" class="label">Модель принтера</label>
                     <select name="model_name" id="model_name" required>
@@ -37,5 +38,9 @@
                         <input type="submit" class="button" id="submit_button" name="submit_button" value="Сохранить"/>
                     </div>
             </form>
+        <script>
+            var before = document.getElementById("before");
+            before.value = document.referrer;
+        </script>
     </div>
 {% endblock %}
