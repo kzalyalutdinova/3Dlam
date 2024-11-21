@@ -77,6 +77,7 @@ td[id^="operations"] {
 }
 
 #cell_material {
+    max-width: 100px;
     padding-left: 5px;
     padding-right: 5px;
 }
@@ -116,7 +117,7 @@ input[type="number"].input {
     background-color: #2e383f;
 }
 
-#hide, #show, #delete {
+#hide, #show, #delete, #page_back, #page_forward {
     background-color: white;
     color: #07617d;
     font-weight: bold;
@@ -156,4 +157,23 @@ textarea.input {
     height: 100% !important;
     width: 500px !important;
     font-size: medium;
+}
+
+#pagination {
+    display: flex;
+}
+
+#page {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+#form_pagination {
+    align-items: center;
+}
+
+#num {
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
 }

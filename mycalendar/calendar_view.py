@@ -4,6 +4,7 @@ import re
 from decimal import Decimal
 import json
 import pytz
+from math import ceil
 
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
@@ -631,7 +632,6 @@ class OrdersTableView(View):
             pr_register.extend(PrintingRegister.objects.filter(month=sc.months_list[i-1],
                                                               year=year,
                                                               next_month=True))
-
         else:
             year = self.today.year
             sc.leap_year_check(year)
@@ -1015,6 +1015,12 @@ class PrintingPlanView(View):
                 drawing = None
             try:
                 material = item.orders.all().first().material.name
+                for i in range(len(item.orders.all()) - 1):
+                    material_1 = item.orders.all()[i].material.name
+                    material_2 = item.orders.all()[i+1].material.name
+                    if material_1 != material_2:
+                        material = 'Материалы привязанных заказов не совпадают'
+                        break
             except AttributeError or IndexError:
                 material = 'Не был привязан заказ'
             self.context['items'].append({'item': item,
@@ -1074,15 +1080,34 @@ class PrintingPlanView(View):
 class ReadyOrdersView(View):
     template = 'pp_ReadyOrdersTable.html'
     context = {}
+    page = 1
 
     def get(self, request):
-        print(request.GET)
+
+        # self.page = 1
         self.context['items'] = []
-        for item in ReadyOrder.objects.all():
+        ready_orders = ReadyOrder.objects.all()
+        max_pages = ceil(len(ready_orders)/10)
+        if 'page' in request.GET:
+            self.page = int(request.GET['page_num'])
+            if request.GET['page'] == 'Далее' and self.page < max_pages:
+                self.page += 1
+            elif request.GET['page'] == 'Назад' and self.page >= 2:
+                self.page -= 1
+            print(self.page)
+
+        head = 10 * (self.page - 1)
+        tail = 10 + head
+        count = 1
+        for item in ready_orders[head:tail]:
             item = {'item': item,
-                    'drawing': [dr.file for dr in Drawing.objects.filter(order=item.order)]}
-            print(item['drawing'])
+                    'drawing': [dr.file for dr in Drawing.objects.filter(order=item.order)],
+                    'num': head + count}
+            count += 1
+
             self.context['items'].append(item)
+            self.context['page'] = self.page
+            self.context['max_pages'] = max_pages
         return render(request, self.template, self.context)
 
     def post(self, request):

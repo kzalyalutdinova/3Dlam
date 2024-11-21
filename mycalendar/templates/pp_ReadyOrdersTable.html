@@ -20,6 +20,7 @@
                 <table id="printing_register_table">
                    <thead>
                         <tr>
+                            <th scope="col" class="tab-label">№</th>
                             <th scope="col" class="tab-label">Изображение</th>
                             <th scope="col" class="tab-label">Наименование</th>
                             <th scope="col" class="tab-label">Кол-во</th>
@@ -37,6 +38,7 @@
                             {% else %}
                                 <tr>
                             {% endif %}
+                                    <td id="num" class="cell">{{item.num}}</td>
                                     <td id="drawing_cell" class="cell">
                                         <a class='showimg'>Показать
                                             <div class='image-container' id="image-container&{{item.item.id}}" style='display:none;'>
@@ -113,7 +115,7 @@
                         type: 'POST',
                         data: {
                             'csrfmiddlewaretoken': '{{csrf_token}}',
-                            'id': tr.cells[2].children[0].id.split('&')[1],
+                            'id': tr.cells[3].children[0].id.split('&')[1],
                             'attr': 'hidden',
                             'value': new Boolean(true)
                         },
@@ -137,7 +139,7 @@
                                 type: 'POST',
                                 data: {
                                     'csrfmiddlewaretoken': '{{csrf_token}}',
-                                    'id': tr.cells[2].children[0].id.split('&')[1],
+                                    'id': tr.cells[3].children[0].id.split('&')[1],
                                     'attr': 'hidden',
                                     'value': new Boolean(false)
                                 },
@@ -165,7 +167,7 @@
                         type: 'POST',
                         data: {
                             'csrfmiddlewaretoken': '{{csrf_token}}',
-                            'id': tr.cells[2].children[0].id.split('&')[1],
+                            'id': tr.cells[3].children[0].id.split('&')[1],
                             'delete': 'delete',
                         },
                         dataType: 'json',
@@ -179,5 +181,13 @@
                 }
             </script>
         </form>
+        <form action="" class="printing_register" method="get" id="form_pagination">
+            <div class="block" id="pagination">
+                <input type="submit" id="page_back" name="page" class="button" value="Назад"/>
+                <div id="page">Страница {{page}} из {{max_pages}}</div>
+                <input type="hidden" id="page_num" name="page_num" value="{{page}}"/>
+                <input type="submit" id="page_forward" name="page" class="button" value="Далее"/>
+            </div>
 
+        </form>
 {% endblock %}
