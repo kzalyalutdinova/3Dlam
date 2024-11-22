@@ -1087,17 +1087,19 @@ class ReadyOrdersView(View):
         # self.page = 1
         self.context['items'] = []
         ready_orders = ReadyOrder.objects.all()
-        max_pages = ceil(len(ready_orders)/10)
+        max_pages = ceil(len(ready_orders)/15)
         if 'page' in request.GET:
             self.page = int(request.GET['page_num'])
             if request.GET['page'] == 'Далее' and self.page < max_pages:
                 self.page += 1
             elif request.GET['page'] == 'Назад' and self.page >= 2:
                 self.page -= 1
-            print(self.page)
-
-        head = 10 * (self.page - 1)
-        tail = 10 + head
+            elif request.GET['page'] == 'В начало':
+                self.page = 1
+            elif request.GET['page'] == 'В конец':
+                self.page = max_pages
+        head = 15 * (self.page - 1)
+        tail = 15 + head
         count = 1
         for item in ready_orders[head:tail]:
             item = {'item': item,

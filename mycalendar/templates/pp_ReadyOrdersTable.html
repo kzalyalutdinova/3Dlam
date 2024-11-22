@@ -183,10 +183,12 @@
         </form>
         <form action="" class="printing_register" method="get" id="form_pagination">
             <div class="block" id="pagination">
+                <input type="submit" id="page_to_start" name="page" class="button" value="В начало"/>
                 <input type="submit" id="page_back" name="page" class="button" value="Назад"/>
                 <div id="page">Страница {{page}} из {{max_pages}}</div>
                 <input type="hidden" id="page_num" name="page_num" value="{{page}}"/>
                 <input type="submit" id="page_forward" name="page" class="button" value="Далее"/>
+                <input type="submit" id="page_to_end" name="page" class="button" value="В конец"/>
             </div>
 
         </form>
