@@ -92,6 +92,7 @@ class CreateSchedule(View):
                                                     year=self.year)
 
         self.update_tasks()
+
         for day in range(month_year_obj.days_amount):
             weekday = sc.weekdays_list[(self.first_weekday + day) % 7]
             date = f'{self.year}-{self.month}-{day + 1}'
@@ -104,6 +105,7 @@ class CreateSchedule(View):
 
 
             task = sc.set_tasks(weekday=instance.weekday, day_num=day, o_day=self.o_day, y_day=self.y_day)
+
 
             if task == 'powder day':
                 self.powder_day.append(instance.date)
@@ -138,7 +140,8 @@ class CreateSchedule(View):
         return render(request, self.template, context)
 
     def post(self, request):
-
+        self.powder_day = []
+        self.optics_day = []
         if 'next-month' in request.POST:
             if request.POST['current-month'] == '':
                 current_month = self.month
@@ -149,7 +152,7 @@ class CreateSchedule(View):
             next_month, year = sc.show_nextMonth(current_month, current_year)
             date = str(datetime.date(year=year, month=next_month, day=1))
             self.update_date(date)
-
+            print(f'Дата {date}')
         elif 'previous-month' in request.POST:
             if request.POST['current-month'] == '':
                 current_month = self.month
@@ -160,6 +163,7 @@ class CreateSchedule(View):
             next_month, year = sc.show_prevMonth(current_month, current_year)
             date = str(datetime.date(year=year, month=next_month, day=1))
             self.update_date(date)
+
         elif 'redirect-to-table' in request.POST:
             return redirect('material_table')
 
@@ -170,9 +174,10 @@ class CreateSchedule(View):
                                                     year=self.year)
 
         self.update_tasks()
+        print(self.powder_day, self.optics_day, self.cyclone_day, self.cleaning_day)
         for day in range(month_year_obj.days_amount):
             weekday = sc.weekdays_list[(self.first_weekday + day) % 7]
-            date = f'{self.year}-{self.month}-{day + 1}'
+            date = datetime.date(self.year, self.month, day + 1)
             # print(date, weekday)
             instance = sc.get_or_create_day(date=date, weekday=weekday, month_year=month_year_obj)
             # print(instance.date)
@@ -182,16 +187,12 @@ class CreateSchedule(View):
 
             if task == 'powder day':
                 self.powder_day.append(instance.date)
-
             elif task == 'cleanup day':
                 self.optics_day.append(instance.date)
-
             elif task == 'cyclone day':
                 self.cyclone_day = instance.date
-
             elif task == 'cleaning day':
                 self.cleaning_day = instance.date
-
 
         if all(x in request.POST for x in ['printer', 'material', 'height']):
             result = round(float(request.POST['height'])
@@ -200,6 +201,10 @@ class CreateSchedule(View):
         else:
             result = ''
 
+        print(f'Взвешивание порошка: {self.powder_day}')
+        print(f'Очистка оптики: {self.optics_day}')
+        print(f'Очистка циклона: {self.cyclone_day}')
+        print(f'Чистка установок: {self.cleaning_day}')
         cal = WorkCalendar()
         html_calendar = cal.formatmonth(self.year, self.month, withyear=True)
         html_calendar = html_calendar.replace('<td ', '<td  width="150" height="150"')
